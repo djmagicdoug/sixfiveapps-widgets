@@ -1,0 +1,507 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>html,body{margin:0;padding:0;height:100%;width:100%;}.gb-microapp-root{width:100%;max-width:none!important;margin-left:0;margin-right:0;box-sizing:border-box;}</style>
+<style>
+html,body{margin:0;padding:0;width:100%;background:#F8F6F3;}
+*{box-sizing:border-box;}
+.gb-microapp-root{width:100%;min-height:100%;background:#F8F6F3;color:#262626;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;overflow-x:hidden;}
+
+.content-wrapper{width:100%;max-width:760px;margin:0 auto;padding:16px 16px 32px;}
+
+/* ── HERO ── */
+.eyebrow{display:inline-flex;align-items:center;min-height:24px;padding:0 10px;border-radius:14px;background:#fff;border:1px solid #E3E0DC;color:#B3995B;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px;}
+h1{margin:0 0 4px;font-family:Georgia,"Times New Roman",serif;font-size:28px;line-height:1.15;font-weight:700;color:#262626;}
+.page-sub{margin:0 0 20px;color:#5C5C5C;font-size:14px;line-height:1.5;}
+
+/* ── TABS ── */
+.tab-bar{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:20px;}
+.tab-btn{min-height:46px;border-radius:14px;border:1px solid #E3E0DC;background:#fff;color:#5C5C5C;font-size:15px;font-weight:700;cursor:pointer;transition:background 160ms ease,color 160ms ease,border-color 160ms ease,box-shadow 160ms ease;}
+.tab-btn.active{background:#C65E2D;color:#fff;border-color:#C65E2D;box-shadow:0 4px 10px rgba(198,94,45,.22);}
+.tab-btn:active{opacity:.85;}
+
+/* ── TAB PANELS ── */
+.tab-panel{display:none;}
+.tab-panel.active{display:block;}
+
+/* ── SECTION BLURB ── */
+.section-blurb{margin:0 0 16px;font-size:14px;color:#5C5C5C;line-height:1.5;}
+
+/* ── STAT CARD ── */
+.stat-card{background:#fff;border:1px solid #E3E0DC;border-radius:12px;padding:14px 16px;box-shadow:0 2px 8px rgba(0,0,0,.06);margin-bottom:16px;}
+.stat-label{display:block;font-size:12px;color:#70685C;margin-bottom:6px;text-transform:uppercase;letter-spacing:.04em;}
+.stat-card strong{font-size:18px;line-height:1.2;color:#2B2B2B;}
+
+/* ── RESET BTN ── */
+.reset-btn{min-height:40px;padding:0 16px;border-radius:14px;border:1px solid #C65E2D;background:#fff;color:#C65E2D;font-size:13px;font-weight:700;cursor:pointer;float:right;margin-bottom:16px;}
+.reset-btn:active{opacity:.8;}
+.clearfix::after{content:'';display:table;clear:both;}
+
+/* ── CALC CARD (single) ── */
+.calc-card{background:#fff;border:1px solid #E3E0DC;border-radius:14px;padding:16px;box-shadow:0 2px 8px rgba(0,0,0,.08);}
+.calc-card:focus-within{border-color:rgba(198,94,45,.35);box-shadow:0 4px 12px rgba(198,94,45,.08);}
+
+/* ── FIELDS ── */
+.field{display:flex;flex-direction:column;gap:8px;margin-bottom:16px;}
+.field:last-of-type{margin-bottom:0;}
+label{font-size:13px;font-weight:700;color:#5C5C5C;}
+input{width:100%;height:48px;border:1px solid #E3E0DC;border-radius:12px;background:#F8F6F3;padding:0 14px;font-size:16px;color:#262626;outline:none;transition:border-color 160ms ease,box-shadow 160ms ease,background 160ms ease;}
+input::placeholder{color:#B6A996;}
+input:focus{border-color:#C65E2D;box-shadow:0 0 0 3px rgba(198,94,45,.12);background:#fff;}
+.error-note{min-height:18px;font-size:12px;color:#C65E2D;margin-top:2px;}
+
+/* ── TIP PILLS ── */
+.tip-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+.tip-pill{min-height:44px;border-radius:14px;border:1px solid #E3E0DC;background:#F8F6F3;color:#5C5C5C;font-size:15px;font-weight:700;cursor:pointer;transition:background 160ms ease,color 160ms ease,border-color 160ms ease;}
+.tip-pill.is-selected{background:#C65E2D;color:#fff;border-color:#C65E2D;box-shadow:0 4px 10px rgba(198,94,45,.22);}
+.tip-pill:active{opacity:.85;}
+
+/* ── DIVIDER ── */
+.divider{height:1px;background:#E3E0DC;margin:16px 0;}
+
+/* ── OUTPUT CHIPS ── */
+.outputs{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px;}
+.output-chip{padding:12px 14px;border-radius:12px;background:#F8F6F3;border:1px solid #E3E0DC;min-height:68px;}
+.output-label{display:block;font-size:12px;color:#70685C;text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px;}
+.output-value{font-size:18px;line-height:1.2;font-weight:700;color:#C65E2D;}
+.output-chip.dark .output-value{color:#262626;}
+
+/* ── SHARED ITEMS ── */
+.shared-section{margin-bottom:20px;}
+.section-heading{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+.section-heading-text{font-family:Georgia,"Times New Roman",serif;font-size:18px;font-weight:700;color:#262626;}
+.section-badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:14px;background:#fff8ef;border:1px solid rgba(198,94,45,.2);color:#C65E2D;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;}
+.shared-card{background:#fff;border:1px solid #E3E0DC;border-radius:14px;padding:16px;box-shadow:0 2px 8px rgba(0,0,0,.06);margin-bottom:10px;}
+.shared-card:focus-within{border-color:rgba(198,94,45,.35);box-shadow:0 4px 12px rgba(198,94,45,.08);}
+.shared-row-label{font-size:13px;font-weight:700;color:#B3995B;margin-bottom:10px;text-transform:uppercase;letter-spacing:.06em;}
+.shared-fields{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.shared-output{margin-top:12px;padding:10px 14px;border-radius:10px;background:#F8F6F3;border:1px solid #E3E0DC;display:flex;align-items:center;justify-content:space-between;}
+.shared-output-label{font-size:12px;color:#70685C;text-transform:uppercase;letter-spacing:.04em;}
+.shared-output-value{font-size:16px;font-weight:700;color:#C65E2D;}
+
+/* ── GUEST CARDS ── */
+.rows-wrap{display:grid;grid-template-columns:1fr;gap:16px;}
+.guest-card{background:#fff;border:1px solid #E3E0DC;border-radius:14px;padding:16px;box-shadow:0 2px 8px rgba(0,0,0,.08);}
+.guest-card:focus-within{border-color:rgba(198,94,45,.45);box-shadow:0 4px 12px rgba(198,94,45,.12);}
+.guest-fields{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.guest-label-static{font-size:12px;color:#B3995B;font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px;}
+.name-input{width:100%;height:40px;border:1px solid #E3E0DC;border-radius:12px;background:#F8F6F3;padding:0 14px;font-size:15px;font-weight:600;color:#262626;outline:none;margin-bottom:12px;}
+.name-input:focus{border-color:#C65E2D;box-shadow:0 0 0 3px rgba(198,94,45,.12);background:#fff;}
+.guest-outputs{margin-top:12px;display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+
+/* ── FOOTER ── */
+.footer-note{text-align:center;font-size:13px;color:#70685C;margin-top:20px;padding-bottom:8px;line-height:1.5;}
+
+@media(min-width:768px){
+  .content-wrapper{padding:24px 24px 32px;}
+  h1{font-size:34px;}
+}
+</style>
+</head>
+<body>
+<div class="gb-microapp-root">
+  <div class="content-wrapper">
+
+    <!-- HERO -->
+    <div class="eyebrow">Tip Tools</div>
+    <h1>Tip Tools</h1>
+    <p class="page-sub">Presented by Six Five Apps</p>
+    <p class="page-sub">Quick tip math, right when you need it.</p>
+
+    <!-- TAB BAR -->
+    <div class="tab-bar">
+      <button class="tab-btn active" id="tabSingle" type="button">🧾 Single Check</button>
+      <button class="tab-btn" id="tabSplitter" type="button">➗ Bill Splitter</button>
+    </div>
+
+    <!-- ══════════════════════════════════ -->
+    <!-- PANEL 1 — SINGLE CHECK            -->
+    <!-- ══════════════════════════════════ -->
+    <div class="tab-panel active" id="panelSingle">
+
+      <div class="clearfix">
+        <button class="reset-btn" id="tcReset" type="button">Reset</button>
+      </div>
+
+      <p class="section-blurb">For when one person's covering the bill. Enter the total, pick a tip, and split across guests if needed.</p>
+
+      <div class="calc-card">
+        <div class="field">
+          <label for="tcBill">Bill Amount</label>
+          <input id="tcBill" type="number" inputmode="decimal" placeholder="0.00" min="0" step="0.01" autocomplete="off">
+          <div class="error-note" id="tcBillErr"></div>
+        </div>
+
+        <div class="field">
+          <label>Tip Percentage</label>
+          <div class="tip-grid">
+            <button class="tip-pill" type="button" data-rate="15" id="tcP15">15%</button>
+            <button class="tip-pill" type="button" data-rate="18" id="tcP18">18%</button>
+            <button class="tip-pill is-selected" type="button" data-rate="20" id="tcP20">20%</button>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="tcCustom">Custom Tip %</label>
+          <input id="tcCustom" type="number" inputmode="decimal" placeholder="Enter a custom percentage" min="0" step="1" autocomplete="off">
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="field">
+          <label for="tcGuests">Number of Guests</label>
+          <input id="tcGuests" type="number" inputmode="numeric" placeholder="1" min="1" step="1" value="1" autocomplete="off">
+        </div>
+
+        <div class="outputs">
+          <div class="output-chip"><span class="output-label">Tip Amount</span><span class="output-value" id="tcOutTip">$0.00</span></div>
+          <div class="output-chip"><span class="output-label">Tip Per Person</span><span class="output-value" id="tcOutTipPP">$0.00</span></div>
+          <div class="output-chip dark"><span class="output-label">Total Amount</span><span class="output-value" id="tcOutTotal">$0.00</span></div>
+          <div class="output-chip dark"><span class="output-label">Total Per Person</span><span class="output-value" id="tcOutTotalPP">$0.00</span></div>
+        </div>
+      </div>
+
+    </div><!-- end panelSingle -->
+
+    <!-- ══════════════════════════════════ -->
+    <!-- PANEL 2 — SPLITTER                -->
+    <!-- ══════════════════════════════════ -->
+    <div class="tab-panel" id="panelSplitter">
+
+      <div class="clearfix">
+        <button class="reset-btn" id="spReset" type="button">Reset all</button>
+      </div>
+
+      <p class="section-blurb">Whether you're splitting separate checks or figuring out what each person needs to reimburse the one who covered the tab — enter each guest's order and see exactly what their share comes out to, tip included.</p>
+
+      <div class="stat-card">
+        <span class="stat-label">Completed</span>
+        <strong id="spCompleted">0 of 10</strong>
+      </div>
+
+      <!-- Guest Bills — all 10 hardcoded -->
+      <div class="section-heading" style="margin-bottom:12px;">
+        <span class="section-heading-text">Guest Bills</span>
+      </div>
+
+      <div class="rows-wrap">
+
+        <article class="guest-card">
+          <div class="guest-label-static">Guest 1</div>
+          <input class="name-input" type="text" id="spName0" placeholder="Name (optional)">
+          <div class="guest-fields">
+            <div class="field"><label for="spBill0">Bill</label><input id="spBill0" inputmode="decimal" placeholder="0.00"></div>
+            <div class="field"><label for="spTip0">Tip %</label><input id="spTip0" inputmode="decimal" placeholder="15" value="15"></div>
+          </div>
+          <div class="guest-outputs">
+            <div class="output-chip"><span class="output-label">Tip</span><span class="output-value" id="spTipOut0">$0.00</span></div>
+            <div class="output-chip dark"><span class="output-label">Total</span><span class="output-value" id="spTotOut0">$0.00</span></div>
+          </div>
+        </article>
+
+        <article class="guest-card">
+          <div class="guest-label-static">Guest 2</div>
+          <input class="name-input" type="text" id="spName1" placeholder="Name (optional)">
+          <div class="guest-fields">
+            <div class="field"><label for="spBill1">Bill</label><input id="spBill1" inputmode="decimal" placeholder="0.00"></div>
+            <div class="field"><label for="spTip1">Tip %</label><input id="spTip1" inputmode="decimal" placeholder="15" value="15"></div>
+          </div>
+          <div class="guest-outputs">
+            <div class="output-chip"><span class="output-label">Tip</span><span class="output-value" id="spTipOut1">$0.00</span></div>
+            <div class="output-chip dark"><span class="output-label">Total</span><span class="output-value" id="spTotOut1">$0.00</span></div>
+          </div>
+        </article>
+
+        <article class="guest-card">
+          <div class="guest-label-static">Guest 3</div>
+          <input class="name-input" type="text" id="spName2" placeholder="Name (optional)">
+          <div class="guest-fields">
+            <div class="field"><label for="spBill2">Bill</label><input id="spBill2" inputmode="decimal" placeholder="0.00"></div>
+            <div class="field"><label for="spTip2">Tip %</label><input id="spTip2" inputmode="decimal" placeholder="15" value="15"></div>
+          </div>
+          <div class="guest-outputs">
+            <div class="output-chip"><span class="output-label">Tip</span><span class="output-value" id="spTipOut2">$0.00</span></div>
+            <div class="output-chip dark"><span class="output-label">Total</span><span class="output-value" id="spTotOut2">$0.00</span></div>
+          </div>
+        </article>
+
+        <article class="guest-card">
+          <div class="guest-label-static">Guest 4</div>
+          <input class="name-input" type="text" id="spName3" placeholder="Name (optional)">
+          <div class="guest-fields">
+            <div class="field"><label for="spBill3">Bill</label><input id="spBill3" inputmode="decimal" placeholder="0.00"></div>
+            <div class="field"><label for="spTip3">Tip %</label><input id="spTip3" inputmode="decimal" placeholder="15" value="15"></div>
+          </div>
+          <div class="guest-outputs">
+            <div class="output-chip"><span class="output-label">Tip</span><span class="output-value" id="spTipOut3">$0.00</span></div>
+            <div class="output-chip dark"><span class="output-label">Total</span><span class="output-value" id="spTotOut3">$0.00</span></div>
+          </div>
+        </article>
+
+        <article class="guest-card">
+          <div class="guest-label-static">Guest 5</div>
+          <input class="name-input" type="text" id="spName4" placeholder="Name (optional)">
+          <div class="guest-fields">
+            <div class="field"><label for="spBill4">Bill</label><input id="spBill4" inputmode="decimal" placeholder="0.00"></div>
+            <div class="field"><label for="spTip4">Tip %</label><input id="spTip4" inputmode="decimal" placeholder="15" value="15"></div>
+          </div>
+          <div class="guest-outputs">
+            <div class="output-chip"><span class="output-label">Tip</span><span class="output-value" id="spTipOut4">$0.00</span></div>
+            <div class="output-chip dark"><span class="output-label">Total</span><span class="output-value" id="spTotOut4">$0.00</span></div>
+          </div>
+        </article>
+
+        <article class="guest-card">
+          <div class="guest-label-static">Guest 6</div>
+          <input class="name-input" type="text" id="spName5" placeholder="Name (optional)">
+          <div class="guest-fields">
+            <div class="field"><label for="spBill5">Bill</label><input id="spBill5" inputmode="decimal" placeholder="0.00"></div>
+            <div class="field"><label for="spTip5">Tip %</label><input id="spTip5" inputmode="decimal" placeholder="15" value="15"></div>
+          </div>
+          <div class="guest-outputs">
+            <div class="output-chip"><span class="output-label">Tip</span><span class="output-value" id="spTipOut5">$0.00</span></div>
+            <div class="output-chip dark"><span class="output-label">Total</span><span class="output-value" id="spTotOut5">$0.00</span></div>
+          </div>
+        </article>
+
+        <article class="guest-card">
+          <div class="guest-label-static">Guest 7</div>
+          <input class="name-input" type="text" id="spName6" placeholder="Name (optional)">
+          <div class="guest-fields">
+            <div class="field"><label for="spBill6">Bill</label><input id="spBill6" inputmode="decimal" placeholder="0.00"></div>
+            <div class="field"><label for="spTip6">Tip %</label><input id="spTip6" inputmode="decimal" placeholder="15" value="15"></div>
+          </div>
+          <div class="guest-outputs">
+            <div class="output-chip"><span class="output-label">Tip</span><span class="output-value" id="spTipOut6">$0.00</span></div>
+            <div class="output-chip dark"><span class="output-label">Total</span><span class="output-value" id="spTotOut6">$0.00</span></div>
+          </div>
+        </article>
+
+        <article class="guest-card">
+          <div class="guest-label-static">Guest 8</div>
+          <input class="name-input" type="text" id="spName7" placeholder="Name (optional)">
+          <div class="guest-fields">
+            <div class="field"><label for="spBill7">Bill</label><input id="spBill7" inputmode="decimal" placeholder="0.00"></div>
+            <div class="field"><label for="spTip7">Tip %</label><input id="spTip7" inputmode="decimal" placeholder="15" value="15"></div>
+          </div>
+          <div class="guest-outputs">
+            <div class="output-chip"><span class="output-label">Tip</span><span class="output-value" id="spTipOut7">$0.00</span></div>
+            <div class="output-chip dark"><span class="output-label">Total</span><span class="output-value" id="spTotOut7">$0.00</span></div>
+          </div>
+        </article>
+
+        <article class="guest-card">
+          <div class="guest-label-static">Guest 9</div>
+          <input class="name-input" type="text" id="spName8" placeholder="Name (optional)">
+          <div class="guest-fields">
+            <div class="field"><label for="spBill8">Bill</label><input id="spBill8" inputmode="decimal" placeholder="0.00"></div>
+            <div class="field"><label for="spTip8">Tip %</label><input id="spTip8" inputmode="decimal" placeholder="15" value="15"></div>
+          </div>
+          <div class="guest-outputs">
+            <div class="output-chip"><span class="output-label">Tip</span><span class="output-value" id="spTipOut8">$0.00</span></div>
+            <div class="output-chip dark"><span class="output-label">Total</span><span class="output-value" id="spTotOut8">$0.00</span></div>
+          </div>
+        </article>
+
+        <article class="guest-card">
+          <div class="guest-label-static">Guest 10</div>
+          <input class="name-input" type="text" id="spName9" placeholder="Name (optional)">
+          <div class="guest-fields">
+            <div class="field"><label for="spBill9">Bill</label><input id="spBill9" inputmode="decimal" placeholder="0.00"></div>
+            <div class="field"><label for="spTip9">Tip %</label><input id="spTip9" inputmode="decimal" placeholder="15" value="15"></div>
+          </div>
+          <div class="guest-outputs">
+            <div class="output-chip"><span class="output-label">Tip</span><span class="output-value" id="spTipOut9">$0.00</span></div>
+            <div class="output-chip dark"><span class="output-label">Total</span><span class="output-value" id="spTotOut9">$0.00</span></div>
+          </div>
+        </article>
+
+      </div><!-- end rows-wrap -->
+
+      <!-- Shared Items -->
+      <div class="shared-section" style="margin-top:28px;">
+        <div class="section-heading">
+          <span class="section-heading-text">Shared Items</span>
+          <span class="section-badge">15% tip included</span>
+        </div>
+        <p class="section-blurb">Splitting a bottle of wine or an appetizer with the table? Enter the item total and how many people are sharing — we'll calculate each person's portion including tip.</p>
+        <div class="shared-card">
+          <div class="shared-row-label">Shared Item 1</div>
+          <div class="shared-fields">
+            <div class="field"><label for="sAmt0">Item Total</label><input id="sAmt0" inputmode="decimal" placeholder="0.00"></div>
+            <div class="field"><label for="sPpl0">People Splitting</label><input id="sPpl0" inputmode="numeric" placeholder="2"></div>
+          </div>
+          <div class="shared-output"><span class="shared-output-label">Per person (with 15% tip)</span><span class="shared-output-value" id="sOut0">$0.00</span></div>
+        </div>
+        <div class="shared-card">
+          <div class="shared-row-label">Shared Item 2</div>
+          <div class="shared-fields">
+            <div class="field"><label for="sAmt1">Item Total</label><input id="sAmt1" inputmode="decimal" placeholder="0.00"></div>
+            <div class="field"><label for="sPpl1">People Splitting</label><input id="sPpl1" inputmode="numeric" placeholder="2"></div>
+          </div>
+          <div class="shared-output"><span class="shared-output-label">Per person (with 15% tip)</span><span class="shared-output-value" id="sOut1">$0.00</span></div>
+        </div>
+        <div class="shared-card">
+          <div class="shared-row-label">Shared Item 3</div>
+          <div class="shared-fields">
+            <div class="field"><label for="sAmt2">Item Total</label><input id="sAmt2" inputmode="decimal" placeholder="0.00"></div>
+            <div class="field"><label for="sPpl2">People Splitting</label><input id="sPpl2" inputmode="numeric" placeholder="2"></div>
+          </div>
+          <div class="shared-output"><span class="shared-output-label">Per person (with 15% tip)</span><span class="shared-output-value" id="sOut2">$0.00</span></div>
+        </div>
+      </div>
+
+    </div><!-- end panelSplitter -->
+
+    <p class="footer-note"><strong>Pro Tip:</strong> Before you leave the table, open your camera app and grab a quick group photo. Moments like these are worth keeping.</p>
+
+  </div>
+</div>
+
+<script>
+// ── TAB SWITCHING ──
+document.getElementById('tabSingle').addEventListener('click', function() {
+  document.getElementById('tabSingle').classList.add('active');
+  document.getElementById('tabSplitter').classList.remove('active');
+  document.getElementById('panelSingle').classList.add('active');
+  document.getElementById('panelSplitter').classList.remove('active');
+});
+document.getElementById('tabSplitter').addEventListener('click', function() {
+  document.getElementById('tabSplitter').classList.add('active');
+  document.getElementById('tabSingle').classList.remove('active');
+  document.getElementById('panelSplitter').classList.add('active');
+  document.getElementById('panelSingle').classList.remove('active');
+});
+
+// ══════════════════════════════════════
+// SINGLE CHECK CALCULATOR
+// ══════════════════════════════════════
+var selRate = 20, usingCustom = false;
+
+function money(n) {
+  var v = Number(n);
+  if (!isFinite(v) || isNaN(v)) v = 0;
+  return '$' + v.toFixed(2);
+}
+
+function toNum(v) {
+  var n = parseFloat(String(v).replace(/[^0-9.-]/g, ''));
+  return (isFinite(n) && !isNaN(n)) ? n : 0;
+}
+
+function setPill(rate) {
+  selRate = rate;
+  usingCustom = false;
+  document.querySelectorAll('.tip-pill').forEach(function(p) {
+    p.classList.toggle('is-selected', Number(p.dataset.rate) === rate);
+  });
+  document.getElementById('tcCustom').value = '';
+}
+
+function calcSingle() {
+  var bill = parseFloat(document.getElementById('tcBill').value);
+  var guests = parseFloat(document.getElementById('tcGuests').value);
+  var cust = parseFloat(document.getElementById('tcCustom').value);
+  var b = (isFinite(bill) && bill >= 0) ? bill : 0;
+  var g = (isFinite(guests) && guests >= 1) ? guests : 1;
+  var pct = (usingCustom && isFinite(cust)) ? cust : selRate;
+  var tip = b * (pct / 100);
+  var total = b + tip;
+  document.getElementById('tcOutTip').textContent    = money(tip);
+  document.getElementById('tcOutTipPP').textContent  = money(tip / g);
+  document.getElementById('tcOutTotal').textContent  = money(total);
+  document.getElementById('tcOutTotalPP').textContent = money(total / g);
+}
+
+document.querySelectorAll('.tip-pill').forEach(function(p) {
+  p.addEventListener('click', function() { setPill(Number(p.dataset.rate)); calcSingle(); });
+});
+document.getElementById('tcBill').addEventListener('input', calcSingle);
+document.getElementById('tcGuests').addEventListener('input', calcSingle);
+document.getElementById('tcCustom').addEventListener('input', function() {
+  var v = document.getElementById('tcCustom').value.trim();
+  if (v !== '') {
+    usingCustom = true;
+    document.querySelectorAll('.tip-pill').forEach(function(p) { p.classList.remove('is-selected'); });
+  } else {
+    usingCustom = false;
+    setPill(selRate);
+  }
+  calcSingle();
+});
+document.getElementById('tcReset').addEventListener('click', function() {
+  document.getElementById('tcBill').value = '';
+  document.getElementById('tcCustom').value = '';
+  document.getElementById('tcGuests').value = '1';
+  usingCustom = false;
+  setPill(20);
+  calcSingle();
+});
+setPill(20);
+calcSingle();
+
+// ══════════════════════════════════════
+// SPLITTER
+// ══════════════════════════════════════
+var GUEST_COUNT = 10;
+var SHARED_COUNT = 3;
+var SHARED_TIP = 15;
+
+function updateShared(i) {
+  var amt = toNum(document.getElementById('sAmt' + i).value);
+  var ppl = toNum(document.getElementById('sPpl' + i).value);
+  var val = (amt > 0 && ppl > 0) ? (amt / ppl) * (1 + SHARED_TIP / 100) : 0;
+  document.getElementById('sOut' + i).textContent = money(val);
+}
+
+for (var si = 0; si < SHARED_COUNT; si++) {
+  (function(idx) {
+    document.getElementById('sAmt' + idx).addEventListener('input', function() { updateShared(idx); });
+    document.getElementById('sPpl' + idx).addEventListener('input', function() { updateShared(idx); });
+  })(si);
+}
+
+function updateSpRow(i) {
+  var bill = toNum(document.getElementById('spBill' + i).value);
+  var tipPct = toNum(document.getElementById('spTip' + i).value) || 15;
+  var tip = bill * (tipPct / 100);
+  var total = bill + tip;
+  document.getElementById('spTipOut' + i).textContent = money(tip);
+  document.getElementById('spTotOut' + i).textContent = money(total);
+  updateSpCompleted();
+}
+
+function updateSpCompleted() {
+  var count = 0;
+  for (var i = 0; i < GUEST_COUNT; i++) {
+    if (toNum(document.getElementById('spBill' + i).value) > 0) count++;
+  }
+  document.getElementById('spCompleted').textContent = count + ' of 10';
+}
+
+for (var gi = 0; gi < GUEST_COUNT; gi++) {
+  (function(idx) {
+    document.getElementById('spBill' + idx).addEventListener('input', function() { updateSpRow(idx); });
+    document.getElementById('spTip'  + idx).addEventListener('input', function() { updateSpRow(idx); });
+  })(gi);
+}
+
+document.getElementById('spReset').addEventListener('click', function() {
+  for (var i = 0; i < GUEST_COUNT; i++) {
+    document.getElementById('spName' + i).value = '';
+    document.getElementById('spBill' + i).value = '';
+    document.getElementById('spTip'  + i).value = '15';
+    document.getElementById('spTipOut' + i).textContent = '$0.00';
+    document.getElementById('spTotOut' + i).textContent = '$0.00';
+  }
+  for (var s = 0; s < SHARED_COUNT; s++) {
+    document.getElementById('sAmt' + s).value = '';
+    document.getElementById('sPpl' + s).value = '';
+    document.getElementById('sOut' + s).textContent = '$0.00';
+  }
+  document.getElementById('spCompleted').textContent = '0 of 10';
+});
+</script>
+</body>
