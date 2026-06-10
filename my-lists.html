@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My List</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #F8F6F3;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    min-height: 100vh;
+    padding: 16px;
+  }
+
+  .card {
+    background: #fff;
+    border-radius: 14px;
+    padding: 20px;
+    max-width: 480px;
+    margin: 0 auto;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+  }
+
+  .eyebrow {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #B3995B;
+    margin-bottom: 4px;
+  }
+
+  h1 {
+    font-family: Georgia, serif;
+    font-size: 22px;
+    color: #1a1a1a;
+    margin-bottom: 16px;
+  }
+
+  /* Tabs */
+  .tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+    background: #F1EDE7;
+    border-radius: 10px;
+    padding: 4px;
+  }
+
+  .tab-btn {
+    flex: 1;
+    padding: 9px;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+    background: transparent;
+    color: #888;
+    transition: background 0.15s, color 0.15s;
+  }
+
+  .tab-btn.active {
+    background: #C65E2D;
+    color: #fff;
+  }
+
+  /* Panels */
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  /* Input row */
+  .input-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+
+  .input-row input[type="text"] {
+    flex: 1;
+    padding: 10px 12px;
+    border: 1.5px solid #e0ddd8;
+    border-radius: 10px;
+    font-size: 15px;
+    outline: none;
+    background: #FAFAF8;
+    color: #1a1a1a;
+    transition: border-color 0.15s;
+  }
+
+  .input-row input[type="text"]:focus { border-color: #C65E2D; }
+  .input-row input::placeholder { color: #aaa; }
+
+  .btn-add {
+    background: #C65E2D;
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    padding: 10px 16px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+
+  .btn-add:hover { background: #b0521f; }
+
+  /* Quick add pills */
+  .quick-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #999;
+    margin-bottom: 8px;
+  }
+
+  .quick-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+    margin-bottom: 18px;
+  }
+
+  .pill {
+    background: #F1EDE7;
+    border: none;
+    border-radius: 14px;
+    padding: 6px 13px;
+    font-size: 13px;
+    color: #5a4a3a;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+    font-family: inherit;
+  }
+
+  .pill:hover { background: #C65E2D; color: #fff; }
+
+  /* Progress */
+  .progress-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: #888;
+    margin-bottom: 6px;
+  }
+
+  .progress-bar {
+    background: #eee;
+    border-radius: 99px;
+    height: 6px;
+    margin-bottom: 16px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: #C65E2D;
+    border-radius: 99px;
+    transition: width 0.3s ease;
+    width: 0%;
+  }
+
+  /* List */
+  .list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 14px;
+    min-height: 40px;
+  }
+
+  .item {
+    background: #FAFAF8;
+    border-radius: 10px;
+    padding: 10px 12px;
+  }
+
+  .item-top {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .item input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: #C65E2D;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+
+  .item-text {
+    flex: 1;
+    font-size: 15px;
+    color: #1a1a1a;
+  }
+
+  .item.checked .item-text {
+    text-decoration: line-through;
+    color: #aaa;
+  }
+
+  .item-delete {
+    background: none;
+    border: none;
+    color: #ccc;
+    font-size: 18px;
+    cursor: pointer;
+    padding: 0 2px;
+    line-height: 1;
+    flex-shrink: 0;
+  }
+
+  .item-delete:hover { color: #C65E2D; }
+
+  /* Qty + Price row (grocery only) */
+  .item-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 8px;
+    padding-left: 28px;
+  }
+
+  .qty-group {
+    display: flex;
+    align-items: center;
+    border: 1.5px solid #e0ddd8;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #fff;
+  }
+
+  .qty-btn {
+    background: none;
+    border: none;
+    width: 28px;
+    height: 28px;
+    font-size: 16px;
+    cursor: pointer;
+    color: #C65E2D;
+    font-weight: 700;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .qty-btn:hover { background: #F1EDE7; }
+
+  .qty-display {
+    font-size: 14px;
+    font-weight: 600;
+    color: #1a1a1a;
+    min-width: 22px;
+    text-align: center;
+  }
+
+  .price-wrap {
+    display: flex;
+    align-items: center;
+    border: 1.5px solid #e0ddd8;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #fff;
+  }
+
+  .price-symbol {
+    padding: 0 6px;
+    font-size: 13px;
+    color: #999;
+    background: #F8F6F3;
+    border-right: 1px solid #e0ddd8;
+    height: 28px;
+    display: flex;
+    align-items: center;
+  }
+
+  .price-input {
+    width: 68px;
+    height: 28px;
+    border: none;
+    outline: none;
+    font-size: 14px;
+    padding: 0 6px;
+    color: #1a1a1a;
+    background: #fff;
+    font-family: inherit;
+  }
+
+  .item-subtotal {
+    margin-left: auto;
+    font-size: 13px;
+    color: #B3995B;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  /* Running total */
+  .total-bar {
+    background: #F1EDE7;
+    border-radius: 10px;
+    padding: 12px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+
+  .total-label {
+    font-size: 13px;
+    color: #5a4a3a;
+    font-weight: 600;
+  }
+
+  .total-amount {
+    font-size: 20px;
+    font-weight: 700;
+    font-family: Georgia, serif;
+    color: #C65E2D;
+  }
+
+  /* Empty state */
+  .empty-state {
+    text-align: center;
+    color: #bbb;
+    font-size: 14px;
+    padding: 20px 0;
+  }
+
+  /* Action buttons */
+  .actions {
+    display: flex;
+    gap: 8px;
+  }
+
+  .btn-secondary {
+    flex: 1;
+    background: #F1EDE7;
+    border: none;
+    border-radius: 10px;
+    padding: 9px;
+    font-size: 13px;
+    color: #5a4a3a;
+    cursor: pointer;
+    font-family: inherit;
+    font-weight: 500;
+  }
+
+  .btn-secondary:hover { background: #e5ddd4; }
+</style>
+</head>
+<body>
+
+<div class="card">
+  <div class="eyebrow">My List</div>
+  <h1>📋 My List</h1>
+
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('grocery')">🛒 Grocery</button>
+    <button class="tab-btn" onclick="switchTab('todo')">✅ To Do</button>
+  </div>
+
+  <!-- GROCERY PANEL -->
+  <div class="panel active" id="panel-grocery">
+    <div class="input-row">
+      <input type="text" id="groceryInput" placeholder="Add an item..." autocomplete="off" />
+      <button class="btn-add" onclick="addFromInput('grocery')">+ Add</button>
+    </div>
+
+    <div class="quick-label">Quick Add</div>
+    <div class="quick-pills">
+      <button class="pill" onclick="quickAdd('grocery','Milk')">+ Milk</button>
+      <button class="pill" onclick="quickAdd('grocery','Eggs')">+ Eggs</button>
+      <button class="pill" onclick="quickAdd('grocery','Butter')">+ Butter</button>
+      <button class="pill" onclick="quickAdd('grocery','Cheese')">+ Cheese</button>
+      <button class="pill" onclick="quickAdd('grocery','Chicken')">+ Chicken</button>
+      <button class="pill" onclick="quickAdd('grocery','Ground Beef')">+ Ground Beef</button>
+      <button class="pill" onclick="quickAdd('grocery','Bread')">+ Bread</button>
+      <button class="pill" onclick="quickAdd('grocery','Pasta')">+ Pasta</button>
+      <button class="pill" onclick="quickAdd('grocery','Rice')">+ Rice</button>
+      <button class="pill" onclick="quickAdd('grocery','Bananas')">+ Bananas</button>
+      <button class="pill" onclick="quickAdd('grocery','Apples')">+ Apples</button>
+      <button class="pill" onclick="quickAdd('grocery','Toilet Paper')">+ Toilet Paper</button>
+    </div>
+
+    <div class="progress-row">
+      <span id="grocery-progressText">0 of 0 checked off</span>
+      <span id="grocery-progressPercent">0%</span>
+    </div>
+    <div class="progress-bar">
+      <div class="progress-fill" id="grocery-progressFill"></div>
+    </div>
+
+    <div class="list" id="grocery-list"></div>
+
+    <div class="total-bar" id="grocery-totalBar" style="display:none;">
+      <span class="total-label">Estimated Total</span>
+      <span class="total-amount" id="grocery-totalAmount">$0.00</span>
+    </div>
+
+    <div class="actions" id="grocery-actions" style="display:none;">
+      <button class="btn-secondary" onclick="clearChecked('grocery')">Clear Checked</button>
+      <button class="btn-secondary" onclick="clearAll('grocery')">Clear All</button>
+    </div>
+  </div>
+
+  <!-- TO DO PANEL -->
+  <div class="panel" id="panel-todo">
+    <div class="input-row">
+      <input type="text" id="todoInput" placeholder="Add a task..." autocomplete="off" />
+      <button class="btn-add" onclick="addFromInput('todo')">+ Add</button>
+    </div>
+
+    <div class="quick-label">Quick Add</div>
+    <div class="quick-pills">
+      <button class="pill" onclick="quickAdd('todo','Gas')">⛽ Gas</button>
+      <button class="pill" onclick="quickAdd('todo','Groceries')">🛒 Groceries</button>
+      <button class="pill" onclick="quickAdd('todo','Laundry')">🧺 Laundry</button>
+      <button class="pill" onclick="quickAdd('todo','Pharmacy')">💊 Pharmacy</button>
+      <button class="pill" onclick="quickAdd('todo','Bank')">🏦 Bank</button>
+      <button class="pill" onclick="quickAdd('todo','Post Office')">📦 Post Office</button>
+      <button class="pill" onclick="quickAdd('todo','Clean House')">🧹 Clean House</button>
+      <button class="pill" onclick="quickAdd('todo','Car Wash')">🚗 Car Wash</button>
+    </div>
+
+    <div class="progress-row">
+      <span id="todo-progressText">0 of 0 complete</span>
+      <span id="todo-progressPercent">0%</span>
+    </div>
+    <div class="progress-bar">
+      <div class="progress-fill" id="todo-progressFill"></div>
+    </div>
+
+    <div class="list" id="todo-list"></div>
+
+    <div class="actions" id="todo-actions" style="display:none;">
+      <button class="btn-secondary" onclick="clearChecked('todo')">Clear Checked</button>
+      <button class="btn-secondary" onclick="clearAll('todo')">Clear All</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  var state = {
+    grocery: JSON.parse(localStorage.getItem('mylist-grocery') || '[]'),
+    todo: JSON.parse(localStorage.getItem('mylist-todo') || '[]')
+  };
+
+  var activeTab = 'grocery';
+
+  function switchTab(tab) {
+    activeTab = tab;
+    document.querySelectorAll('.tab-btn').forEach(function(btn, i) {
+      btn.classList.toggle('active', (i === 0 && tab === 'grocery') || (i === 1 && tab === 'todo'));
+    });
+    document.getElementById('panel-grocery').classList.toggle('active', tab === 'grocery');
+    document.getElementById('panel-todo').classList.toggle('active', tab === 'todo');
+  }
+
+  function save(type) {
+    localStorage.setItem('mylist-' + type, JSON.stringify(state[type]));
+  }
+
+  function makeId() {
+    return Date.now() + '_' + Math.floor(Math.random() * 100000);
+  }
+
+  function quickAdd(type, name) {
+    state[type].push({ text: name, checked: false, qty: 1, price: '', id: makeId() });
+    save(type);
+    render(type);
+  }
+
+  function addFromInput(type) {
+    var input = document.getElementById(type + 'Input');
+    var val = input.value.trim();
+    if (!val) return;
+    state[type].push({ text: val, checked: false, qty: 1, price: '', id: makeId() });
+    input.value = '';
+    input.focus();
+    save(type);
+    render(type);
+  }
+
+  function toggleItem(type, id) {
+    for (var i = 0; i < state[type].length; i++) {
+      if (state[type][i].id === id) { state[type][i].checked = !state[type][i].checked; break; }
+    }
+    save(type); render(type);
+  }
+
+  function changeQty(id, delta) {
+    for (var i = 0; i < state.grocery.length; i++) {
+      if (state.grocery[i].id === id) {
+        state.grocery[i].qty = Math.max(1, (state.grocery[i].qty || 1) + delta);
+        break;
+      }
+    }
+    save('grocery'); render('grocery');
+  }
+
+  function updatePrice(id, val) {
+    for (var i = 0; i < state.grocery.length; i++) {
+      if (state.grocery[i].id === id) { state.grocery[i].price = val; break; }
+    }
+    save('grocery'); renderTotal();
+  }
+
+  function deleteItem(type, id) {
+    state[type] = state[type].filter(function(item) { return item.id !== id; });
+    save(type); render(type);
+  }
+
+  function clearChecked(type) {
+    state[type] = state[type].filter(function(item) { return !item.checked; });
+    save(type); render(type);
+  }
+
+  function clearAll(type) {
+    state[type] = [];
+    save(type); render(type);
+  }
+
+  function renderTotal() {
+    var total = 0;
+    var hasAnyPrice = false;
+    state.grocery.forEach(function(item) {
+      var p = parseFloat(item.price);
+      if (!isNaN(p) && p > 0) {
+        hasAnyPrice = true;
+        total += p * (item.qty || 1);
+      }
+    });
+    var bar = document.getElementById('grocery-totalBar');
+    if (hasAnyPrice && state.grocery.length > 0) {
+      bar.style.display = 'flex';
+      document.getElementById('grocery-totalAmount').textContent = '$' + total.toFixed(2);
+    } else {
+      bar.style.display = 'none';
+    }
+  }
+
+  function render(type) {
+    var items = state[type];
+    var listEl = document.getElementById(type + '-list');
+    var total = items.length;
+    var done = items.filter(function(i) { return i.checked; }).length;
+    var pct = total === 0 ? 0 : Math.round((done / total) * 100);
+    var isGrocery = type === 'grocery';
+
+    document.getElementById(type + '-progressText').textContent = isGrocery
+      ? done + ' of ' + total + ' checked off'
+      : done + ' of ' + total + ' complete';
+    document.getElementById(type + '-progressPercent').textContent = pct + '%';
+    document.getElementById(type + '-progressFill').style.width = pct + '%';
+    document.getElementById(type + '-actions').style.display = total > 0 ? 'flex' : 'none';
+
+    if (total === 0) {
+      listEl.innerHTML = '<div class="empty-state">' +
+        (isGrocery ? 'Your list is empty.<br>Add items above or tap Quick Add.' : 'No tasks yet.<br>Add one above or tap Quick Add.') +
+        '</div>';
+      if (isGrocery) renderTotal();
+      return;
+    }
+
+    listEl.innerHTML = '';
+
+    items.forEach(function(item) {
+      var itemId = item.id;
+      var div = document.createElement('div');
+      div.className = 'item' + (item.checked ? ' checked' : '');
+
+      // Top row
+      var topRow = document.createElement('div');
+      topRow.className = 'item-top';
+
+      var cb = document.createElement('input');
+      cb.type = 'checkbox';
+      cb.checked = item.checked;
+      cb.onclick = (function(t, id) { return function() { toggleItem(t, id); }; })(type, itemId);
+
+      var span = document.createElement('span');
+      span.className = 'item-text';
+      span.textContent = item.text;
+
+      var del = document.createElement('button');
+      del.className = 'item-delete';
+      del.textContent = '×';
+      del.onclick = (function(t, id) { return function() { deleteItem(t, id); }; })(type, itemId);
+
+      topRow.appendChild(cb);
+      topRow.appendChild(span);
+      topRow.appendChild(del);
+      div.appendChild(topRow);
+
+      // Grocery-only: qty + price controls
+      if (isGrocery) {
+        var qty = item.qty || 1;
+        var priceVal = item.price || '';
+        var p = parseFloat(priceVal);
+        var subtotal = (!isNaN(p) && p > 0) ? '$' + (p * qty).toFixed(2) : '';
+
+        var ctrlRow = document.createElement('div');
+        ctrlRow.className = 'item-controls';
+
+        var qtyGroup = document.createElement('div');
+        qtyGroup.className = 'qty-group';
+
+        var minusBtn = document.createElement('button');
+        minusBtn.className = 'qty-btn';
+        minusBtn.textContent = '−';
+        minusBtn.onclick = (function(id) { return function() { changeQty(id, -1); }; })(itemId);
+
+        var qtyDisp = document.createElement('span');
+        qtyDisp.className = 'qty-display';
+        qtyDisp.textContent = qty;
+
+        var plusBtn = document.createElement('button');
+        plusBtn.className = 'qty-btn';
+        plusBtn.textContent = '+';
+        plusBtn.onclick = (function(id) { return function() { changeQty(id, 1); }; })(itemId);
+
+        qtyGroup.appendChild(minusBtn);
+        qtyGroup.appendChild(qtyDisp);
+        qtyGroup.appendChild(plusBtn);
+
+        var priceWrap = document.createElement('div');
+        priceWrap.className = 'price-wrap';
+
+        var priceSym = document.createElement('span');
+        priceSym.className = 'price-symbol';
+        priceSym.textContent = '$';
+
+        var priceInp = document.createElement('input');
+        priceInp.type = 'number';
+        priceInp.className = 'price-input';
+        priceInp.placeholder = '0.00';
+        priceInp.min = '0';
+        priceInp.step = '0.01';
+        priceInp.value = priceVal;
+        priceInp.oninput = (function(id) { return function() { updatePrice(id, this.value); }; })(itemId);
+
+        priceWrap.appendChild(priceSym);
+        priceWrap.appendChild(priceInp);
+
+        var subEl = document.createElement('span');
+        subEl.className = 'item-subtotal';
+        subEl.textContent = subtotal;
+
+        ctrlRow.appendChild(qtyGroup);
+        ctrlRow.appendChild(priceWrap);
+        ctrlRow.appendChild(subEl);
+        div.appendChild(ctrlRow);
+      }
+
+      listEl.appendChild(div);
+    });
+
+    if (isGrocery) renderTotal();
+  }
+
+  document.getElementById('groceryInput').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') addFromInput('grocery');
+  });
+
+  document.getElementById('todoInput').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') addFromInput('todo');
+  });
+
+  render('grocery');
+  render('todo');
+</script>
+
+</body>
+</html>
