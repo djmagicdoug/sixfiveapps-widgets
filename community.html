@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Community — Menu15</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #F8F6F3;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    min-height: 100vh;
+    padding: 16px;
+  }
+
+  .section-header {
+    max-width: 480px;
+    margin: 0 auto 16px auto;
+    text-align: center;
+  }
+
+  .section-eyebrow {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #B3995B;
+    margin-bottom: 6px;
+  }
+
+  .section-title {
+    font-family: Georgia, serif;
+    font-size: 26px;
+    color: #1a1a1a;
+    margin-bottom: 8px;
+  }
+
+  .section-intro {
+    font-size: 14px;
+    color: #777;
+    line-height: 1.6;
+  }
+
+  /* Category filter bar */
+  .filter-bar {
+    max-width: 480px;
+    margin: 0 auto 16px auto;
+    display: flex;
+    gap: 7px;
+    overflow-x: auto;
+    padding-bottom: 4px;
+    scrollbar-width: none;
+  }
+
+  .filter-bar::-webkit-scrollbar { display: none; }
+
+  .filter-btn {
+    flex-shrink: 0;
+    background: #fff;
+    border: 1.5px solid #e0ddd8;
+    border-radius: 20px;
+    padding: 6px 13px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #777;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+
+  .filter-btn.active {
+    background: #C65E2D;
+    border-color: #C65E2D;
+    color: #fff;
+  }
+
+  .filter-btn:hover:not(.active) {
+    border-color: #C65E2D;
+    color: #C65E2D;
+  }
+
+  /* Card grid */
+  .card-grid {
+    max-width: 480px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .article-card {
+    background: #fff;
+    border-radius: 14px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+    overflow: hidden;
+    transition: box-shadow 0.2s;
+  }
+
+  .article-card:hover { box-shadow: 0 3px 10px rgba(0,0,0,0.11); }
+  .article-card.hidden { display: none; }
+
+  .card-face {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 16px;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .card-emoji {
+    font-size: 28px;
+    flex-shrink: 0;
+    width: 44px;
+    text-align: center;
+  }
+
+  .card-meta { flex: 1; }
+
+  .card-category {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #B3995B;
+    margin-bottom: 3px;
+  }
+
+  .card-headline {
+    font-family: Georgia, serif;
+    font-size: 15px;
+    color: #1a1a1a;
+    line-height: 1.35;
+    margin-bottom: 4px;
+  }
+
+  .card-teaser {
+    font-size: 12px;
+    color: #888;
+    line-height: 1.5;
+  }
+
+  .card-arrow {
+    font-size: 18px;
+    color: #C65E2D;
+    flex-shrink: 0;
+    transition: transform 0.25s;
+  }
+
+  .article-card.open .card-arrow { transform: rotate(90deg); }
+
+  .article-body {
+    display: none;
+    padding: 0 16px 20px 16px;
+    border-top: 1px solid #F1EDE7;
+  }
+
+  .article-card.open .article-body { display: block; }
+
+  .article-byline {
+    font-size: 12px;
+    color: #B3995B;
+    font-weight: 600;
+    padding: 12px 0 14px 0;
+    border-bottom: 1px solid #F1EDE7;
+    margin-bottom: 16px;
+  }
+
+  .img-slot {
+    background: #F1EDE7;
+    border-radius: 10px;
+    height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 16px;
+    overflow: hidden;
+  }
+
+  .img-slot img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 10px;
+  }
+
+  .img-placeholder {
+    font-size: 13px;
+    color: #bbb;
+    text-align: center;
+    padding: 10px;
+  }
+
+  .article-text {
+    font-size: 14px;
+    color: #333;
+    line-height: 1.75;
+  }
+
+  .article-text p { margin-bottom: 14px; }
+  .article-text p:last-child { margin-bottom: 0; }
+  .article-text strong { color: #1a1a1a; font-weight: 600; }
+
+  /* Contact widget */
+  .contact-bar {
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px solid #F1EDE7;
+  }
+
+  .contact-label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: #B3995B;
+    margin-bottom: 10px;
+    text-align: center;
+  }
+
+  .contact-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+  }
+
+  .contact-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    min-height: 62px;
+    padding: 8px 4px;
+    text-align: center;
+    text-decoration: none;
+    color: #1f1f1f;
+    background: #ffffff;
+    border: 1px solid #eadfce;
+    border-radius: 10px;
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 1.15;
+    transition: background 0.15s;
+  }
+
+  .contact-btn:hover { background: #F1EDE7; }
+  .contact-icon { font-size: 20px; line-height: 1; }
+
+  .close-btn {
+    display: block;
+    width: 100%;
+    margin-top: 18px;
+    background: #F1EDE7;
+    border: none;
+    border-radius: 10px;
+    padding: 10px;
+    font-size: 13px;
+    color: #5a4a3a;
+    cursor: pointer;
+    font-family: inherit;
+    font-weight: 600;
+    text-align: center;
+  }
+
+  .close-btn:hover { background: #e5ddd4; }
+</style>
+</head>
+<body>
+
+<div class="section-header">
+  <div class="section-eyebrow">Menu15</div>
+  <h1 class="section-title">🌿 Community</h1>
+  <p class="section-intro">Stories, culture, and ideas from the people and places that make this neighborhood worth living in.</p>
+</div>
+
+<!-- Category Filter Bar -->
+<div class="filter-bar">
+  <button class="filter-btn active" onclick="filterCards('all')">All</button>
+  <button class="filter-btn" onclick="filterCards('off-the-menu')">🍹 Off the Menu</button>
+  <button class="filter-btn" onclick="filterCards('art-speaks')">🎨 Art Speaks</button>
+  <button class="filter-btn" onclick="filterCards('music-seen')">🎵 Music Seen</button>
+  <button class="filter-btn" onclick="filterCards('reading-room')">📚 Reading Room</button>
+  <button class="filter-btn" onclick="filterCards('staged')">🎭 Staged</button>
+</div>
+
+<div class="card-grid" id="cardGrid"></div>
+
+<script>
+  var articles = [
+    {
+      id: 'off-the-menu',
+      emoji: '🍹',
+      category: 'Off the Menu',
+      headline: 'Why We Put Olives in Your Martini',
+      byline: 'By Marco Rivera, Lead Bartender — Copper Fork American Bistro',
+      teaser: 'Nobody asks me about the olive. They ask about the gin, the vermouth ratio, shaken versus stirred. But the olive? It just sits there like it\'s always been there. Which, honestly, it pretty much has.',
+      img1: '',
+      img2: '',
+      body1: [
+        "Nobody asks me about the olive. They ask about the gin, the vermouth ratio, shaken versus stirred. But the olive? It just sits there, speared at the bottom of the glass like it's always been there and always will be. Which, honestly, it pretty much has.",
+        "The dirty martini didn't show up until the early 1900s, but the olive as garnish goes back to the 1880s when bartenders started experimenting with what we'd now call the classic martini. The theory most people accept is that the olive was a palate cleanser. Gin back then was rougher, less refined. The brininess of the olive cut through it, gave your mouth something to reset with between sips."
+      ],
+      body2: [
+        "What I find interesting is that it stuck around even as gin got better. The olive isn't just a garnish — it changes the drink. Even if you order a clean martini with no brine, that olive is sitting in your gin, slowly releasing its oils into the glass. By the time you get to the bottom, your last sip tastes different than your first. A little rounder. A little more savory.",
+        "At Copper Fork we use Castelvetrano olives — the bright green ones from Sicily, milder and buttery compared to your standard pimento-stuffed cocktail olive. A lot of guests notice something is different but can't place it. That's usually my favorite moment.",
+        "If you want to try it at home: two and a half ounces of gin, half an ounce of dry vermouth, stirred with ice for about thirty seconds, strained into a chilled glass. The chilled glass matters more than most people think. And yes — stirred, not shaken. Shaking bruises the gin. That's not a myth. You're welcome."
+      ],
+      contact: {
+        website: 'https://copperforkbistro.com',
+        email: 'mailto:hello@copperforkbistro.com',
+        instagram: 'https://instagram.com/copperforkbistro'
+      }
+    },
+    {
+      id: 'art-speaks',
+      emoji: '🎨',
+      category: 'Art Speaks',
+      headline: 'She Paints What She Feels, and the Neighborhood Is Starting to Notice',
+      byline: 'By Elena Vasquez, Local Artist',
+      teaser: 'Elena Vasquez didn\'t set out to become a painter. She set out to stop overthinking. Somewhere between her first canvas and her fifteenth, she found both.',
+      img1: '',
+      img2: '',
+      body1: [
+        "Elena Vasquez didn't set out to become a painter. She set out to stop overthinking. Somewhere between her first canvas and her fifteenth, she found both.",
+        "A local resident for eleven years, Elena spent most of her adult life working in graphic design — corporate clients, tight deadlines, other people's visions. Painting started as a weekend release, something with no brief and no approval process. She'd set up in her garage on Saturday mornings with a cup of coffee and no plan."
+      ],
+      body2: [
+        '"The first few were terrible," she says, laughing. "But terrible in a way that was completely mine. That felt like something."',
+        "Her work has since evolved into large-format acrylic pieces — bold color fields interrupted by fine detail work, the kind of painting you can stand ten feet from and then two inches from and see two entirely different things. She describes her influences as everything from Rothko to the light that hits the mountains at dusk.",
+        "This July, Elena will show twelve new pieces at a small gallery pop-up in Henderson, her largest showing to date. She's also begun taking commissions for residential work — statement pieces for living rooms and entryways. \"People in this neighborhood have beautiful homes,\" she says. \"I like the idea of walking past something every day that stops you for a second.\""
+      ],
+      contact: null
+    },
+    {
+      id: 'music-seen',
+      emoji: '🎵',
+      category: 'Music Seen',
+      headline: 'Maya Reyes Has Been Singing Her Whole Life. Vegas Is Finally Listening.',
+      byline: 'By Maya Reyes, Singer-Songwriter',
+      teaser: 'Maya Reyes grew up in a house where the radio was never off. Her mother played Aretha. Her father played Coltrane. She played everything in between.',
+      img1: '',
+      img2: '',
+      body1: [
+        "Maya Reyes grew up in a house where the radio was never off. Her mother played Aretha. Her father played Coltrane. She played everything in between.",
+        "Now 29 and based in Henderson, Maya has been performing in the Las Vegas valley for six years — first at open mics, then at small venues, then at the kinds of rooms where people actually put their phones down and listen. Her sound sits somewhere between soul and indie folk, anchored by a voice that sounds like it has lived longer than she has."
+      ],
+      body2: [
+        '"I used to try to sound like other people," she admits. "You spend a lot of time doing that when you\'re starting out. Then one night I just stopped trying. That was the night people started coming up to me afterward."',
+        "Her debut EP, recorded last fall at a studio in North Las Vegas, is four songs that feel like four different rooms in the same house. Warm, a little melancholy, and impossible to get out of your head. She released it quietly — no label, no marketing budget — just a link shared among friends that somehow kept traveling.",
+        '"Las Vegas has this reputation," she says. "Like music here is just background noise for something else. I want to be the reason someone stops walking."'
+      ],
+      contact: null
+    },
+    {
+      id: 'reading-room',
+      emoji: '📚',
+      category: 'Reading Room',
+      headline: 'Why Our Book Club Read "Remarkably Bright Creatures" Twice',
+      byline: 'By Sandra Okafor, Book Club Organizer',
+      teaser: 'Some books you finish and set down. Some you finish and immediately want to talk to someone about. This one is firmly the second kind.',
+      img1: '',
+      img2: '',
+      body1: [
+        "Some books you finish and set down. Some books you finish and immediately want to talk to someone about. Shelby Van Pelt's debut novel, Remarkably Bright Creatures, is firmly the second kind. Our book club read it once in March and voted to read it again in April. That has never happened before.",
+        "On the surface it sounds like a quirky premise — a grieving widow named Tova works the night shift at a small aquarium, and the giant Pacific octopus in residence slowly becomes central to unraveling a decades-old family mystery. But Van Pelt writes the octopus, Marcellus, as a full point-of-view character, and it works completely. He is observant, dry, quietly philosophical, and somehow more emotionally intelligent than most of the humans in the book."
+      ],
+      body2: [
+        "What the novel is really about is grief and the strange ways people find each other when they are lost. The book moves slowly toward the truth of what happened to Tova's son, but the journey matters more than the destination.",
+        "Our group of seven had wildly different reactions to different characters, which is always a sign of good writing. Two members cried at the ending. One refused to admit she cried but was clearly lying.",
+        "If you are looking for something simultaneously light and heavy, funny and sad, with one of the most unexpectedly moving narrators in recent fiction — this is it."
+      ],
+      contact: null
+    },
+    {
+      id: 'staged',
+      emoji: '🎭',
+      category: 'Staged',
+      headline: 'For Director James Obi, the Play Begins Long Before Opening Night',
+      byline: 'By James Obi, Theater Director',
+      teaser: 'James Obi has been directing theater for eighteen years. He still gets nervous before the first rehearsal. He says that\'s how he knows the project is worth doing.',
+      img1: '',
+      img2: '',
+      body1: [
+        "James Obi has been directing theater for eighteen years. He still gets nervous before the first rehearsal. He says that's how he knows the project is worth doing.",
+        "This July, James brings his latest production to a small black box theater in downtown Las Vegas — a new American play called The Space Between. It's the story of two brothers settling their late father's estate and everything that surfaces in the process. Three characters, one set, ninety minutes with no intermission."
+      ],
+      body2: [
+        '"I\'m drawn to plays where the set doesn\'t move but everything else does," James says. "When you strip away the spectacle, the actors have nowhere to hide. That\'s terrifying for them and riveting for the audience."',
+        "His process starts not with the script but with the silences. He reads through a new play once for story, once for what isn't being said, and once for where the characters are lying to each other. He believes most interesting drama lives in the gap between what people say and what they mean.",
+        "The run is two weekends only in July. James expects it to sell out and is characteristically unbothered about saying so. \"Good theater finds its audience,\" he says. \"My job is just to make sure it's worth finding.\""
+      ],
+      contact: null
+    }
+  ];
+
+  function filterCards(categoryId) {
+    // Update filter buttons
+    document.querySelectorAll('.filter-btn').forEach(function(btn) {
+      btn.classList.remove('active');
+    });
+    event.target.classList.add('active');
+
+    // Show/hide cards
+    document.querySelectorAll('.article-card').forEach(function(card) {
+      if (categoryId === 'all' || card.dataset.category === categoryId) {
+        card.classList.remove('hidden');
+      } else {
+        card.classList.add('hidden');
+        card.classList.remove('open');
+      }
+    });
+  }
+
+  function toggleCard(index) {
+    var card = document.getElementById('card-' + index);
+    var isOpen = card.classList.contains('open');
+    document.querySelectorAll('.article-card').forEach(function(c) {
+      c.classList.remove('open');
+    });
+    if (!isOpen) {
+      card.classList.add('open');
+      setTimeout(function() {
+        card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 50);
+    }
+  }
+
+  function buildGrid() {
+    var grid = document.getElementById('cardGrid');
+
+    articles.forEach(function(article, index) {
+      var card = document.createElement('div');
+      card.className = 'article-card';
+      card.id = 'card-' + index;
+      card.dataset.category = article.id;
+
+      var img1HTML = '<div class="img-slot">' + (article.img1 ? '<img src="' + article.img1 + '" alt=""/>' : '<div class="img-placeholder">📷 Hero Image</div>') + '</div>';
+      var img2HTML = '<div class="img-slot">' + (article.img2 ? '<img src="' + article.img2 + '" alt=""/>' : '<div class="img-placeholder">📷 Image 2</div>') + '</div>';
+
+      var body1HTML = article.body1.map(function(p) { return '<p>' + p + '</p>'; }).join('');
+      var body2HTML = article.body2.map(function(p) { return '<p>' + p + '</p>'; }).join('');
+
+      var contactHTML = '';
+      if (article.contact) {
+        contactHTML =
+          '<div class="contact-bar">' +
+            '<div class="contact-label">Connect</div>' +
+            '<div class="contact-grid">' +
+              '<a class="contact-btn" href="' + article.contact.website + '" target="_blank"><span class="contact-icon">🌐</span><span>Website</span></a>' +
+              '<a class="contact-btn" href="' + article.contact.email + '"><span class="contact-icon">📧</span><span>Email</span></a>' +
+              '<a class="contact-btn" href="' + article.contact.instagram + '" target="_blank"><span class="contact-icon">📸</span><span>Instagram</span></a>' +
+            '</div>' +
+          '</div>';
+      }
+
+      card.innerHTML =
+        '<div class="card-face" onclick="toggleCard(' + index + ')">' +
+          '<div class="card-emoji">' + article.emoji + '</div>' +
+          '<div class="card-meta">' +
+            '<div class="card-category">' + article.category + '</div>' +
+            '<div class="card-headline">' + article.headline + '</div>' +
+            '<div class="card-teaser">' + article.teaser + '</div>' +
+          '</div>' +
+          '<div class="card-arrow">›</div>' +
+        '</div>' +
+        '<div class="article-body">' +
+          '<div class="article-byline">' + article.byline + '</div>' +
+          img1HTML +
+          '<div class="article-text">' + body1HTML + '</div>' +
+          img2HTML +
+          '<div class="article-text">' + body2HTML + '</div>' +
+          contactHTML +
+          '<button class="close-btn" onclick="toggleCard(' + index + ')">↑ Close</button>' +
+        '</div>';
+
+      grid.appendChild(card);
+    });
+  }
+
+  buildGrid();
+</script>
+
+</body>
+</html>
