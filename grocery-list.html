@@ -1,0 +1,372 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>html,body{margin:0;padding:0;height:100%;width:100%;}.gb-microapp-root{width:100%;max-width:none!important;margin-left:0;margin-right:0;box-sizing:border-box;}</style>
+<style>
+.gb-microapp-root{width:100%;min-height:100%;background:#f8f6f3;color:#262626;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;box-sizing:border-box}.gb-microapp-root *{box-sizing:border-box}.gb-microapp-root .content-wrapper{width:100%;max-width:640px;margin:0 auto;padding:16px 16px 24px}.gb-microapp-root .hero-card{background:#262626;color:#fff;border-radius:16px;padding:24px 20px 22px;box-shadow:0 2px 8px rgba(0,0,0,.1);animation:gbFadeUp .35s ease-out both}.gb-microapp-root .eyebrow{font-size:12px;letter-spacing:1.6px;text-transform:uppercase;color:#b3995b;font-weight:700;margin-bottom:10px}.gb-microapp-root h1{margin:0 0 10px;font-family:"Georgia",serif;font-size:30px;line-height:1.1;font-weight:700;color:#fff}.gb-microapp-root .hero-copy{margin:0;font-size:16px;line-height:1.55;color:#f1eadf}.gb-microapp-root .main-card{margin-top:16px;background:#fff;border:1px solid #e3e0dc;border-radius:16px;padding:18px;box-shadow:0 2px 8px rgba(0,0,0,.08);animation:gbCardIn .28s ease-out both}.gb-microapp-root .task-form{display:flex;gap:10px;align-items:flex-start;margin-bottom:18px}.gb-microapp-root .input-wrap{flex:1}.gb-microapp-root .sr-only{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}.gb-microapp-root input[type="text"],.gb-microapp-root input[type="number"]{width:100%;min-height:44px;border:1px solid #d7c6ad;border-radius:12px;padding:12px 14px;font-size:16px;line-height:1.4;background:#fff;color:#262626;outline:none;transition:border-color .18s ease,box-shadow .18s ease}.gb-microapp-root input::placeholder{color:#9b9184}.gb-microapp-root input:focus{border-color:#b3995b;box-shadow:0 0 0 2px rgba(179,153,91,.18)}.gb-microapp-root .has-error{border-color:#c65e2d!important;box-shadow:0 0 0 2px rgba(198,94,45,.12)!important}.gb-microapp-root .field-error{min-height:18px;margin-top:6px;font-size:13px;line-height:1.3;color:#c65e2d}.gb-microapp-root .primary-btn,.gb-microapp-root .secondary-btn,.gb-microapp-root .danger-btn{min-height:44px;border:none;border-radius:12px;padding:12px 16px;font-size:15px;font-weight:700;cursor:pointer;transition:transform .16s ease,background-color .16s ease,opacity .16s ease,box-shadow .16s ease}.gb-microapp-root .primary-btn{background:#c65e2d;color:#fff;box-shadow:0 2px 8px rgba(198,94,45,.2);min-width:88px}.gb-microapp-root .primary-btn:active,.gb-microapp-root .secondary-btn:active,.gb-microapp-root .danger-btn:active{transform:translateY(1px)}.gb-microapp-root .progress-card{background:#f3eadc;border:1px solid #e2d2ba;border-radius:14px;padding:16px;margin-bottom:14px}.gb-microapp-root .section-title-row{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;margin-bottom:12px}.gb-microapp-root .section-kicker{font-size:13px;font-weight:700;letter-spacing:.2px;color:#70685c;margin-bottom:4px}.gb-microapp-root .progress-headline{font-size:16px;font-weight:700;line-height:1.25;color:#262626}.gb-microapp-root .progress-percent{font-size:20px;font-weight:700;color:#262626;min-width:52px;text-align:right}.gb-microapp-root .progress-bar{height:14px;background:#dfd2bd;border-radius:999px;overflow:hidden}.gb-microapp-root .progress-fill{height:100%;width:0%;background:linear-gradient(90deg,#262626 0%,#262626 82%,#b3995b 100%);transition:width .25s ease}.gb-microapp-root .completion-note{min-height:18px;margin-top:8px;font-size:13px;color:#b3995b;font-weight:700}.gb-microapp-root .banner{display:none;margin-bottom:14px;padding:12px 14px;border-radius:12px;background:#fff4ec;border:1px solid #f0cfbf;color:#9c2f20;font-size:14px;line-height:1.45}.gb-microapp-root .list-area{position:relative}.gb-microapp-root .loading-state{display:none;padding:6px 0 8px}.gb-microapp-root .skeleton{border-radius:10px;background:linear-gradient(90deg,#ece6df 25%,#f6f1e8 37%,#ece6df 63%);background-size:400% 100%;animation:gbPulse 1.2s linear infinite;opacity:.9}.gb-microapp-root .skeleton-line{height:12px;margin-bottom:10px}.gb-microapp-root .skeleton-row{height:56px;margin-top:10px}.gb-microapp-root .w60{width:60%}.gb-microapp-root .w88{width:88%}.gb-microapp-root .w100{width:100%}.gb-microapp-root .empty-state{display:none;text-align:center;padding:28px 14px 16px;color:#70685c}.gb-microapp-root .empty-title{font-size:16px;line-height:1.5;font-weight:600;color:#5c5c5c}.gb-microapp-root .empty-subtitle{margin-top:8px;font-size:14px;line-height:1.45}.gb-microapp-root .task-list{list-style:none;padding:0;margin:0;border-top:1px solid #e3e0dc}.gb-microapp-root .task-item{display:flex;align-items:center;gap:12px;padding:14px 0;border-bottom:1px solid #e3e0dc;animation:gbRowIn .22s ease-out both}.gb-microapp-root .task-check{width:22px;height:22px;accent-color:#262626;flex:0 0 auto}.gb-microapp-root .task-main{flex:1;min-width:0}.gb-microapp-root .task-text{display:block;font-size:16px;line-height:1.4;color:#2b2b2b;word-break:break-word}.gb-microapp-root .task-meta{margin-top:4px;font-size:12px;line-height:1.3;color:#70685c}.gb-microapp-root .task-item.completed .task-text{text-decoration:line-through;color:#70685c;opacity:.72}.gb-microapp-root .task-item.completed{background:rgba(248,246,243,.65)}.gb-microapp-root .qty-controls{display:flex;align-items:center;gap:6px;flex-shrink:0}.gb-microapp-root .qty-btn{width:30px;height:30px;border-radius:8px;border:1px solid #e3e0dc;background:#f8f6f3;color:#262626;font-size:17px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;line-height:1;flex-shrink:0}.gb-microapp-root .qty-btn:active{opacity:.7}.gb-microapp-root .qty-number{min-width:24px;text-align:center;font-size:14px;font-weight:700;color:#262626}.gb-microapp-root .task-delete{border:none;background:transparent;color:#c65e2d;font-size:13px;font-weight:700;min-height:44px;padding:0 4px;flex:0 0 auto;cursor:pointer}.gb-microapp-root .actions-row{display:flex;gap:10px;margin-top:16px}.gb-microapp-root .secondary-btn{flex:1;border:1px solid #c65e2d;background:#fff;color:#c65e2d}.gb-microapp-root .danger-btn{background:#c65e2d;color:#fff}.gb-microapp-root .privacy-note{margin-top:16px;background:#fff;border:1px solid #e3e0dc;border-radius:14px;padding:14px;font-size:14px;line-height:1.5;color:#5c5c5c}.gb-microapp-root .privacy-note strong{display:block;margin-bottom:4px;color:#262626;font-size:15px}.gb-microapp-root .confirm-sheet{display:none;position:relative;margin-top:14px}.gb-microapp-root .confirm-card{background:#fff;border:1px solid #e3e0dc;border-radius:16px;padding:16px;box-shadow:0 10px 28px rgba(0,0,0,.08)}.gb-microapp-root .confirm-title{font-size:16px;line-height:1.4;font-weight:700;color:#262626}.gb-microapp-root .confirm-actions{display:flex;gap:10px;margin-top:14px}.gb-microapp-root .confirm-actions .secondary-btn,.gb-microapp-root .confirm-actions .danger-btn{flex:1}.gb-microapp-root .show-banner{display:block}.gb-microapp-root .show-confirm{display:block}.gb-microapp-root .hidden{display:none!important}
+@keyframes gbPulse{0%{background-position:0 0;opacity:.55}50%{opacity:1}100%{background-position:-200% 0;opacity:.55}}
+@keyframes gbFadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes gbCardIn{from{opacity:0;transform:scale(.98)}to{opacity:1;transform:scale(1)}}
+@keyframes gbRowIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@media(min-width:768px){.gb-microapp-root .content-wrapper{padding:24px}.gb-microapp-root .hero-card{padding:28px 28px 26px}.gb-microapp-root h1{font-size:38px}.gb-microapp-root .main-card{padding:22px}}
+@media(min-width:1024px){.gb-microapp-root .content-wrapper{padding:32px 24px 40px}.gb-microapp-root .main-card{padding:24px}}
+@media(max-width:520px){.gb-microapp-root .task-form,.gb-microapp-root .actions-row,.gb-microapp-root .confirm-actions{flex-direction:column}.gb-microapp-root .primary-btn,.gb-microapp-root .secondary-btn,.gb-microapp-root .danger-btn{width:100%}}
+</style>
+</head>
+<body>
+<div class="gb-microapp-root">
+  <div class="content-wrapper">
+
+    <section class="hero-card" aria-label="Grocery list introduction">
+      <div class="eyebrow">Presented by Community Corkboard</div>
+      <h1>Grocery List</h1>
+      <p class="hero-copy">Add items before you head out. Adjust quantities, check things off as you go, and never leave the store wondering what you forgot.</p>
+    </section>
+
+    <section class="main-card" aria-label="Grocery list">
+      <form id="taskForm" class="task-form" novalidate>
+        <div class="input-wrap">
+          <label class="sr-only" for="taskInput">Add a grocery item</label>
+          <input id="taskInput" type="text" inputmode="text" autocomplete="off" placeholder="Add an item to your list..." />
+          <div id="fieldError" class="field-error" role="status" aria-live="polite"></div>
+        </div>
+        <button id="addBtn" class="primary-btn" type="submit">Add</button>
+      </form>
+
+      <section class="progress-card" aria-label="Shopping progress">
+        <div class="section-title-row">
+          <div>
+            <div class="section-kicker">Shopping Progress</div>
+            <div id="progressHeadline" class="progress-headline">0 of 0 checked off</div>
+          </div>
+          <div id="progressPercent" class="progress-percent">0%</div>
+        </div>
+        <div class="progress-bar" aria-hidden="true"><div id="progressFill" class="progress-fill"></div></div>
+        <div id="completionNote" class="completion-note" aria-live="polite"></div>
+      </section>
+
+      <div id="banner" class="banner" role="status" aria-live="polite"></div>
+
+      <div id="listArea" class="list-area">
+        <div id="loadingState" class="loading-state" aria-hidden="true">
+          <div class="skeleton skeleton-line w60"></div>
+          <div class="skeleton skeleton-line w100"></div>
+          <div class="skeleton skeleton-line w88"></div>
+          <div class="skeleton skeleton-row"></div>
+          <div class="skeleton skeleton-row"></div>
+          <div class="skeleton skeleton-row"></div>
+        </div>
+
+        <div id="emptyState" class="empty-state">
+          <div class="empty-title">Your list is empty. Add your first item above.</div>
+          <div class="empty-subtitle">Your list is saved on this device.</div>
+        </div>
+
+        <ul id="taskList" class="task-list" aria-label="Grocery items"></ul>
+      </div>
+
+      <div class="actions-row">
+        <button id="clearCompletedBtn" class="secondary-btn" type="button">Clear Checked</button>
+        <button id="clearAllBtn" class="secondary-btn" type="button">Clear All</button>
+      </div>
+
+      <div id="confirmSheet" class="confirm-sheet" role="dialog" aria-modal="true" aria-labelledby="confirmTitle" aria-hidden="true">
+        <div class="confirm-card">
+          <div id="confirmTitle" class="confirm-title">Clear your entire list? This cannot be undone.</div>
+          <div class="confirm-actions">
+            <button id="cancelClearBtn" class="secondary-btn" type="button">Cancel</button>
+            <button id="deleteAllBtn" class="danger-btn" type="button">Clear all</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="privacy-note">
+        <strong>Private &amp; Local</strong>
+        Your list is saved only on this device. It is not shared with Community Corkboard or other users.
+      </div>
+    </section>
+
+  </div>
+</div>
+
+<script>
+var TASK_STORAGE_KEY = 'commCorkboardGroceryList';
+var tasks = [];
+var storageReady = false;
+var storageFailed = false;
+var loadingView = true;
+var clearAllPending = false;
+var completionTimer = null;
+var fieldErrorTimer = null;
+var bannerTimer = null;
+var confirmTimer = null;
+
+function $(id) { return document.getElementById(id); }
+
+function readStorage() {
+  if (!window.gb || !gb.pluginStorage || !gb.pluginStorage.getItem) {
+    storageFailed = true;
+    storageReady = true;
+    loadingView = false;
+    renderAll();
+    return;
+  }
+  gb.pluginStorage.getItem(TASK_STORAGE_KEY, function(value) {
+    try {
+      if (value) {
+        var parsed = JSON.parse(value);
+        tasks = Array.isArray(parsed) ? parsed : [];
+      } else {
+        tasks = [];
+      }
+    } catch(e) {
+      tasks = [];
+      storageFailed = true;
+      showBanner('We couldn\'t load your saved list. Changes will remain on this screen only.');
+    }
+    storageReady = true;
+    loadingView = false;
+    renderAll();
+  });
+}
+
+function saveStorage() {
+  if (!window.gb || !gb.pluginStorage || !gb.pluginStorage.setItem) return;
+  try {
+    gb.pluginStorage.setItem(TASK_STORAGE_KEY, JSON.stringify(tasks));
+  } catch(e) {
+    showBanner('We couldn\'t save your list right now. Changes will remain on this screen only.');
+  }
+}
+
+function showBanner(msg) {
+  var el = $('banner');
+  el.textContent = msg;
+  el.classList.add('show-banner');
+  clearTimeout(bannerTimer);
+  bannerTimer = setTimeout(function() { el.classList.remove('show-banner'); el.textContent = ''; }, 4000);
+}
+
+function showFieldError(msg) {
+  $('taskInput').classList.add('has-error');
+  $('fieldError').textContent = msg;
+  clearTimeout(fieldErrorTimer);
+  fieldErrorTimer = setTimeout(function() {
+    $('taskInput').classList.remove('has-error');
+    $('fieldError').textContent = '';
+  }, 1500);
+}
+
+function uid() { return String(Date.now()) + '-' + String(Math.floor(Math.random() * 100000)); }
+
+function addTask(text) {
+  tasks.unshift({ id: uid(), text: text, completed: false, qty: 1 });
+  saveStorage();
+  renderAll();
+}
+
+function toggleTask(id) {
+  for (var i = 0; i < tasks.length; i++) {
+    if (tasks[i].id === id) { tasks[i].completed = !tasks[i].completed; break; }
+  }
+  saveStorage();
+  renderAll();
+}
+
+function changeQty(id, delta) {
+  for (var i = 0; i < tasks.length; i++) {
+    if (tasks[i].id === id) {
+      tasks[i].qty = Math.max(1, (tasks[i].qty || 1) + delta);
+      break;
+    }
+  }
+  saveStorage();
+  renderAll();
+}
+
+function deleteTask(id) {
+  tasks = tasks.filter(function(t) { return t.id !== id; });
+  saveStorage();
+  renderAll();
+}
+
+function clearCompletedTasks() {
+  tasks = tasks.filter(function(t) { return !t.completed; });
+  saveStorage();
+  renderAll();
+}
+
+function openConfirm() {
+  clearAllPending = true;
+  $('confirmSheet').classList.add('show-confirm');
+  $('confirmSheet').setAttribute('aria-hidden', 'false');
+  clearTimeout(confirmTimer);
+  confirmTimer = setTimeout(closeConfirm, 5000);
+}
+
+function closeConfirm() {
+  clearAllPending = false;
+  $('confirmSheet').classList.remove('show-confirm');
+  $('confirmSheet').setAttribute('aria-hidden', 'true');
+}
+
+function clearAllTasks() {
+  tasks = [];
+  saveStorage();
+  renderAll();
+  closeConfirm();
+}
+
+function renderProgress() {
+  var total = tasks.length;
+  var done = 0;
+  for (var i = 0; i < tasks.length; i++) if (tasks[i].completed) done++;
+  var pct = total === 0 ? 0 : Math.round((done / total) * 100);
+  $('progressHeadline').textContent = (total > 0 && done === total) ? 'All done — great shop!' : (done + ' of ' + total + ' checked off');
+  $('progressPercent').textContent = pct + '%';
+  $('progressFill').style.width = pct + '%';
+  $('completionNote').textContent = '';
+}
+
+function renderTasks() {
+  var list = $('taskList');
+  list.innerHTML = '';
+  if (!tasks.length) return;
+  for (var i = 0; i < tasks.length; i++) {
+    list.appendChild(createItem(tasks[i]));
+  }
+}
+
+function createItem(task) {
+  var li = document.createElement('li');
+  li.className = 'task-item' + (task.completed ? ' completed' : '');
+
+  // checkbox
+  var check = document.createElement('input');
+  check.type = 'checkbox';
+  check.className = 'task-check';
+  check.checked = !!task.completed;
+  check.setAttribute('aria-label', 'Mark as got it');
+  (function(id) {
+    check.addEventListener('change', function() { toggleTask(id); });
+  })(task.id);
+
+  // text block
+  var main = document.createElement('div');
+  main.className = 'task-main';
+
+  var text = document.createElement('span');
+  text.className = 'task-text';
+  text.textContent = task.text;
+
+  var meta = document.createElement('div');
+  meta.className = 'task-meta';
+  meta.textContent = task.completed ? 'Got it' : 'Qty ' + (task.qty || 1);
+
+  main.appendChild(text);
+  main.appendChild(meta);
+
+  // qty controls
+  var qtyWrap = document.createElement('div');
+  qtyWrap.className = 'qty-controls';
+
+  var qtyDown = document.createElement('button');
+  qtyDown.type = 'button';
+  qtyDown.className = 'qty-btn';
+  qtyDown.textContent = '−';
+  (function(id) {
+    qtyDown.addEventListener('click', function() { changeQty(id, -1); });
+  })(task.id);
+
+  var qtyNum = document.createElement('div');
+  qtyNum.className = 'qty-number';
+  qtyNum.textContent = task.qty || 1;
+
+  var qtyUp = document.createElement('button');
+  qtyUp.type = 'button';
+  qtyUp.className = 'qty-btn';
+  qtyUp.textContent = '+';
+  (function(id) {
+    qtyUp.addEventListener('click', function() { changeQty(id, 1); });
+  })(task.id);
+
+  qtyWrap.appendChild(qtyDown);
+  qtyWrap.appendChild(qtyNum);
+  qtyWrap.appendChild(qtyUp);
+
+  // delete
+  var del = document.createElement('button');
+  del.type = 'button';
+  del.className = 'task-delete';
+  del.textContent = 'Delete';
+  (function(id) {
+    del.addEventListener('click', function() { deleteTask(id); });
+  })(task.id);
+
+  li.appendChild(check);
+  li.appendChild(main);
+  if (!task.completed) li.appendChild(qtyWrap);
+  li.appendChild(del);
+  return li;
+}
+
+function renderState() {
+  var total = tasks.length;
+  var hasDone = tasks.some(function(t) { return t.completed; });
+  $('emptyState').style.display = (total === 0 && !loadingView) ? 'block' : 'none';
+  $('taskList').style.display = total > 0 ? 'block' : 'none';
+  $('loadingState').style.display = (loadingView && !storageReady) ? 'block' : 'none';
+  if (total === 0) { $('clearCompletedBtn').classList.add('hidden'); $('clearAllBtn').classList.add('hidden'); }
+  else { $('clearAllBtn').classList.remove('hidden'); }
+  if (hasDone) { $('clearCompletedBtn').classList.remove('hidden'); }
+  else { $('clearCompletedBtn').classList.add('hidden'); }
+}
+
+function renderAll() {
+  renderState();
+  renderProgress();
+  renderTasks();
+}
+
+function handleSubmit(e) {
+  e.preventDefault();
+  var val = $('taskInput').value.trim();
+  if (!val) { showFieldError('Please add an item before saving.'); return; }
+  addTask(val);
+  $('taskInput').value = '';
+  $('taskInput').focus();
+}
+
+function initSection() {
+  $('taskForm').addEventListener('submit', handleSubmit);
+  $('clearCompletedBtn').addEventListener('click', function() {
+    if (tasks.some(function(t) { return t.completed; })) clearCompletedTasks();
+  });
+  $('clearAllBtn').addEventListener('click', function() {
+    if (tasks.length) openConfirm();
+  });
+  $('cancelClearBtn').addEventListener('click', closeConfirm);
+  $('deleteAllBtn').addEventListener('click', clearAllTasks);
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' && clearAllPending) closeConfirm();
+  });
+  readStorage();
+}
+
+// Always run on DOMContentLoaded
+document.addEventListener('DOMContentLoaded', function() {
+  initSection();
+});
+
+// Also hook Fouita's onappear if available
+if (typeof gb !== 'undefined') {
+  gb.onappear = function() {
+    loadingView = false;
+    renderAll();
+  };
+}
+</script>
+</body>
+</html>
