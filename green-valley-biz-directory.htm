@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:#f8f6f3;color:#2b2b2b}
+.wrap{max-width:960px;margin:0 auto;padding:16px 16px 40px}
+.hero{padding:16px 0 20px}
+.eyebrow{font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#c65e2d;margin-bottom:8px}
+h1{font-size:26px;font-weight:700;line-height:1.2;margin-bottom:8px}
+.subhead{font-size:15px;color:#70685c;line-height:1.5}
+.chips{display:flex;gap:8px;overflow-x:auto;padding:12px 0 8px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{padding:8px 14px;border-radius:999px;border:1px solid #e3e0dc;background:#fff;color:#70685c;font-size:14px;font-weight:600;white-space:nowrap;cursor:pointer;transition:all .15s}
+.chip.active{background:#c65e2d;color:#fff;border-color:#c65e2d}
+.results-note{font-size:13px;color:#70685c;padding:4px 0 14px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+@media(min-width:600px){.grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(min-width:900px){.grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.card{background:#fff;border:1px solid #e3e0dc;border-radius:16px;padding:14px;min-height:130px;display:flex;flex-direction:column;justify-content:space-between;gap:10px;cursor:pointer;text-align:left;transition:transform .12s,box-shadow .15s,border-color .15s}
+.card:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(0,0,0,.1);border-color:#c65e2d}
+.emoji-box{width:48px;height:48px;border-radius:12px;background:#f0e4da;display:flex;align-items:center;justify-content:center;font-size:24px}
+.biz-name{font-size:15px;font-weight:700;line-height:1.2;color:#2b2b2b}
+.biz-cat{font-size:13px;color:#70685c;margin-top:3px;text-transform:capitalize}
+.pagination{display:flex;justify-content:center;align-items:center;gap:16px;padding:24px 0 8px}
+.page-btn{padding:10px 20px;border-radius:999px;border:1px solid #c65e2d;background:#fff;color:#c65e2d;font-size:14px;font-weight:700;cursor:pointer;transition:all .15s}
+.page-btn:hover{background:#c65e2d;color:#fff}
+.page-btn:disabled{opacity:.35;cursor:not-allowed;pointer-events:none}
+.page-indicator{font-size:14px;color:#70685c;font-weight:600}
+.footer{text-align:center;font-size:12px;color:#aaa9a4;padding-top:20px;border-top:1px solid #e3e0dc;margin-top:12px}
+.modal-wrap{position:fixed;inset:0;background:rgba(43,43,43,.5);display:flex;align-items:center;justify-content:center;padding:16px;z-index:50;opacity:0;transition:opacity .18s;pointer-events:none}
+.modal-wrap.show{opacity:1;pointer-events:all}
+.modal{background:#fff;border-radius:20px;width:100%;max-width:500px;max-height:90vh;overflow-y:auto;padding:20px;transform:translateY(10px) scale(.97);transition:transform .2s;position:relative}
+.modal-wrap.show .modal{transform:none}
+.modal-close{position:absolute;top:16px;right:16px;width:36px;height:36px;border-radius:50%;border:none;background:#f8f6f3;color:#2b2b2b;font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.modal-top{display:flex;gap:14px;align-items:center;margin-bottom:14px;padding-right:40px}
+.modal-emoji{width:64px;height:64px;border-radius:16px;background:#f0e4da;display:flex;align-items:center;justify-content:center;font-size:32px;flex-shrink:0}
+.modal-cat{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#c65e2d;margin-bottom:4px}
+.modal-name{font-size:20px;font-weight:700;line-height:1.2}
+.modal-desc{font-size:15px;line-height:1.55;color:#2b2b2b;margin-bottom:16px}
+.info-block{border:1px solid #e3e0dc;border-radius:14px;overflow:hidden;margin-bottom:14px}
+.info-row{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;border-bottom:1px solid #e3e0dc;min-height:44px}
+.info-row:last-child{border-bottom:none}
+.info-label{font-size:13px;font-weight:600;color:#70685c}
+.info-link{font-size:14px;font-weight:700;color:#c65e2d;text-decoration:none;text-align:right;max-width:65%}
+.cta-btn{display:block;width:100%;padding:13px;background:#c65e2d;color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;text-align:center;text-decoration:none;transition:opacity .15s}
+.cta-btn:hover{opacity:.88}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="hero">
+    <p class="eyebrow">Local Directory</p>
+    <h1>Discover trusted neighborhood businesses</h1>
+    <p class="subhead">Browse neighborhood businesses, filter by category, and tap any listing for contact info.</p>
+  </div>
+  <div class="chips" id="chipBar"></div>
+  <div class="results-note" id="resultsNote"></div>
+  <div class="grid" id="grid"></div>
+  <div class="pagination" id="pagination"></div>
+  <div class="footer">Powered by Six Five Apps</div>
+</div>
+
+<div class="modal-wrap" id="modalWrap">
+  <div class="modal" role="dialog" aria-modal="true">
+    <button class="modal-close" id="modalClose" aria-label="Close">×</button>
+    <div class="modal-top">
+      <div class="modal-emoji" id="mEmoji"></div>
+      <div>
+        <div class="modal-cat" id="mCat"></div>
+        <div class="modal-name" id="mName"></div>
+      </div>
+    </div>
+    <p class="modal-desc" id="mDesc"></p>
+    <div class="info-block">
+      <div class="info-row"><span class="info-label">Phone</span><a class="info-link" id="mPhone" href="#"></a></div>
+      <div class="info-row"><span class="info-label">Website</span><a class="info-link" id="mWeb" href="#" target="_blank" rel="noopener"></a></div>
+      <div class="info-row"><span class="info-label" id="mCtaLabel"></span><a class="info-link" id="mCtaLink" href="#" target="_blank" rel="noopener"></a></div>
+    </div>
+    <a class="cta-btn" id="mCtaBtn" href="#" target="_blank" rel="noopener"></a>
+  </div>
+</div>
+
+<script>
+var emojiMap = {
+  'barbershop':'✂️',
+  'yoga studio':'🧘',
+  'mobile mechanic':'🔧',
+  'bakery':'🥐',
+  'pet grooming':'🐾',
+  'handyman':'🪛',
+  'photographer':'📷',
+  'food truck':'🌮',
+  'massage therapy':'💆',
+  'tutoring':'📚',
+  'house cleaning':'🧹',
+  'personal trainer':'💪',
+  'music lessons':'🎸',
+  'bookkeeping':'📒',
+  'nail salon':'💅',
+  'pet store':'🐶'
+};
+
+var businesses = [
+  {id:'northstar-cuts',name:'Northstar Cuts',category:'barbershop',phone:'(555) 014-2287',website:'https://northstarcuts.example',desc:'Walk-ins welcome for sharp cuts, beard trims, and clean line-ups in a relaxed neighborhood setting.',ctaLabel:'Book a cut',ctaLink:'https://northstarcuts.example/book',ctaBtn:'Book appointment'},
+  {id:'harmony-flow',name:'Harmony Flow Studio',category:'yoga studio',phone:'(555) 014-3612',website:'https://harmonyflow.example',desc:'Morning vinyasa, gentle stretch sessions, and small-group classes focused on balance and breath.',ctaLabel:'First class free',ctaLink:'https://harmonyflow.example/free',ctaBtn:'Claim free class'},
+  {id:'roadwise-repair',name:'Roadwise Mobile Repair',category:'mobile mechanic',phone:'(555) 014-4921',website:'https://roadwiserepair.example',desc:'Same-day diagnostics, battery swaps, and roadside tune-ups wherever your car needs help.',ctaLabel:'Get a quote',ctaLink:'https://roadwiserepair.example/quote',ctaBtn:'Request a quote'},
+  {id:'golden-crust',name:'Golden Crust Bakery',category:'bakery',phone:'(555) 014-2058',website:'https://goldencrust.example',desc:'Fresh sourdough, buttery pastries, and custom cakes baked daily with local ingredients.',ctaLabel:'Order online',ctaLink:'https://goldencrust.example/order',ctaBtn:'Order now'},
+  {id:'paws-and-pamper',name:'Paws & Pamper',category:'pet grooming',phone:'(555) 014-7740',website:'https://pawsandpamper.example',desc:'Friendly grooming packages for dogs and cats, from tidy trims to full spa-style refreshes.',ctaLabel:'Schedule grooming',ctaLink:'https://pawsandpamper.example/schedule',ctaBtn:'Book a session'},
+  {id:'fixit-now',name:'FixIt Now Handyman',category:'handyman',phone:'(555) 014-8826',website:'https://fixitnow.example',desc:'Reliable home repairs, furniture assembly, mounting, and quick fixes for busy households.',ctaLabel:'Free estimate',ctaLink:'https://fixitnow.example/estimate',ctaBtn:'Get free estimate'},
+  {id:'bright-frame',name:'Bright Frame Photo',category:'photographer',phone:'(555) 014-6133',website:'https://brightframe.example',desc:'Portraits, family sessions, and event photography with natural light and polished editing.',ctaLabel:'View portfolio',ctaLink:'https://brightframe.example/portfolio',ctaBtn:'See the work'},
+  {id:'street-bites',name:'Street Bites Truck',category:'food truck',phone:'(555) 014-9304',website:'https://streetbites.example',desc:'Rotating street eats, handheld favorites, and quick lunch stops with bold seasonal specials.',ctaLabel:"Today's location",ctaLink:'https://streetbites.example/location',ctaBtn:'Find us today'},
+  {id:'calm-current',name:'Calm Current Massage',category:'massage therapy',phone:'(555) 014-1476',website:'https://calmcurrent.example',desc:'Deep-tissue, relaxation, and recovery sessions designed to ease stress and muscle tension.',ctaLabel:'$10 off first visit',ctaLink:'https://calmcurrent.example/offer',ctaBtn:'Claim your offer'},
+  {id:'summit-minds',name:'Summit Minds Tutoring',category:'tutoring',phone:'(555) 014-5648',website:'https://summitminds.example',desc:'One-on-one support for math, reading, and study habits for students of all ages.',ctaLabel:'Free intro session',ctaLink:'https://summitminds.example/intro',ctaBtn:'Book free session'},
+  {id:'sparkle-house',name:'Sparkle House Cleaners',category:'house cleaning',phone:'(555) 014-7092',website:'https://sparklehouse.example',desc:'Weekly cleans, move-out refreshes, and deep cleaning for a spotless, easy-to-manage home.',ctaLabel:'Get a quote',ctaLink:'https://sparklehouse.example/quote',ctaBtn:'Request a quote'},
+  {id:'stride-lab',name:'Stride Lab Fitness',category:'personal trainer',phone:'(555) 014-3188',website:'https://stridelab.example',desc:'Custom coaching, strength plans, and accountability sessions built around your goals.',ctaLabel:'Free consultation',ctaLink:'https://stridelab.example/consult',ctaBtn:'Book free consult'},
+  {id:'melody-loft',name:'Melody Loft',category:'music lessons',phone:'(555) 014-2469',website:'https://melodyloft.example',desc:'Private lessons for guitar, piano, and voice with encouraging instruction for all levels.',ctaLabel:'Download lesson guide',ctaLink:'https://melodyloft.example/guide',ctaBtn:'Get the free guide'},
+  {id:'clear-ledger',name:'Clear Ledger Bookkeeping',category:'bookkeeping',phone:'(555) 014-5573',website:'https://clearledger.example',desc:'Monthly reconciliations, clean books, and organized reporting for small business owners.',ctaLabel:'Schedule a call',ctaLink:'https://clearledger.example/call',ctaBtn:'Schedule free call'},
+  {id:'polished-touch',name:'Polished Touch Nails',category:'nail salon',phone:'(555) 014-6214',website:'https://polishedtouch.example',desc:'Classic manicures, gel sets, and detailed nail art in a bright, welcoming studio.',ctaLabel:'20% off first visit',ctaLink:'https://polishedtouch.example/offer',ctaBtn:'Claim discount'},
+  {id:'sunridge-pet',name:'Sunridge Pet Supply',category:'pet store',phone:'(555) 014-3377',website:'https://sunridgepet.example',desc:'Local pet supply shop stocked with food, toys, and accessories for dogs, cats, and small animals.',ctaLabel:'Weekly deals',ctaLink:'https://sunridgepet.example/deals',ctaBtn:"See this week's deals"}
+];
+
+var allCats = ['All'].concat(businesses.map(function(b){return b.category;}).filter(function(c,i,a){return a.indexOf(c)===i;}));
+var currentCat = 'All';
+var currentPage = 1;
+var perPage = 10;
+
+function filtered(){
+  if(currentCat==='All') return businesses;
+  return businesses.filter(function(b){return b.category===currentCat;});
+}
+
+function renderChips(){
+  var bar = document.getElementById('chipBar');
+  bar.innerHTML = '';
+  allCats.forEach(function(cat){
+    var btn = document.createElement('button');
+    btn.className = 'chip'+(cat===currentCat?' active':'');
+    btn.textContent = cat==='All'?'All categories':cat;
+    btn.onclick = function(){currentCat=cat;currentPage=1;render();};
+    bar.appendChild(btn);
+  });
+}
+
+function renderGrid(){
+  var list = filtered();
+  var start = (currentPage-1)*perPage;
+  var page = list.slice(start, start+perPage);
+  var grid = document.getElementById('grid');
+  grid.innerHTML = '';
+  page.forEach(function(b){
+    var card = document.createElement('div');
+    card.className = 'card';
+    card.innerHTML = '<div class="emoji-box">'+(emojiMap[b.category]||'🏪')+'</div><div><div class="biz-name">'+b.name+'</div><div class="biz-cat">'+b.category+'</div></div>';
+    card.onclick = function(){openModal(b.id);};
+    grid.appendChild(card);
+  });
+  var note = document.getElementById('resultsNote');
+  note.textContent = list.length+' listing'+(list.length===1?'':'s')+(currentCat!=='All'?' in '+currentCat:'');
+}
+
+function renderPagination(){
+  var list = filtered();
+  var totalPages = Math.ceil(list.length/perPage);
+  var pg = document.getElementById('pagination');
+  pg.innerHTML = '';
+  if(totalPages<=1) return;
+  var prev = document.createElement('button');
+  prev.className = 'page-btn';
+  prev.textContent = '← Previous';
+  prev.disabled = currentPage===1;
+  prev.onclick = function(){currentPage--;render();};
+  pg.appendChild(prev);
+  var ind = document.createElement('span');
+  ind.className = 'page-indicator';
+  ind.textContent = 'Page '+currentPage+' of '+totalPages;
+  pg.appendChild(ind);
+  var next = document.createElement('button');
+  next.className = 'page-btn';
+  next.textContent = 'Next →';
+  next.disabled = currentPage===totalPages;
+  next.onclick = function(){currentPage++;render();};
+  pg.appendChild(next);
+}
+
+function render(){renderChips();renderGrid();renderPagination();}
+
+function openModal(id){
+  var b = businesses.find(function(x){return x.id===id;});
+  if(!b) return;
+  document.getElementById('mEmoji').textContent = emojiMap[b.category]||'🏪';
+  document.getElementById('mCat').textContent = b.category;
+  document.getElementById('mName').textContent = b.name;
+  document.getElementById('mDesc').textContent = b.desc;
+  var ph = document.getElementById('mPhone');
+  ph.textContent = b.phone;
+  ph.href = 'tel:'+b.phone.replace(/[^0-9+]/g,'');
+  var web = document.getElementById('mWeb');
+  web.textContent = b.website.replace(/^https?:\/\//,'');
+  web.href = b.website;
+  document.getElementById('mCtaLabel').textContent = b.ctaLabel;
+  var cl = document.getElementById('mCtaLink');
+  cl.textContent = b.ctaLink.replace(/^https?:\/\//,'');
+  cl.href = b.ctaLink;
+  var cb = document.getElementById('mCtaBtn');
+  cb.textContent = b.ctaBtn;
+  cb.href = b.ctaLink;
+  var wrap = document.getElementById('modalWrap');
+  wrap.style.display = 'flex';
+  requestAnimationFrame(function(){wrap.classList.add('show');});
+}
+
+function closeModal(){
+  var wrap = document.getElementById('modalWrap');
+  wrap.classList.remove('show');
+  setTimeout(function(){wrap.style.display='none';},180);
+}
+
+document.getElementById('modalClose').onclick = closeModal;
+document.getElementById('modalWrap').onclick = function(e){if(e.target===this)closeModal();};
+document.addEventListener('keydown',function(e){if(e.key==='Escape')closeModal();});
+document.getElementById('modalWrap').style.display='none';
+render();
+</script>
+</body>
+</html>
