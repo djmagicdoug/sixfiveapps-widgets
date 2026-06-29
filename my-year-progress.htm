@@ -1,0 +1,273 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>html,body{margin:0;padding:0;height:100%;width:100%;}.gb-microapp-root{width:100%;max-width:none!important;margin-left:0;margin-right:0;box-sizing:border-box;}</style>
+
+<style>
+.gb-microapp-root{width:100%;min-height:100%;background:#E8E7DF;color:#363428;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;box-sizing:border-box;-webkit-text-size-adjust:100%;} .gb-microapp-root *, .gb-microapp-root *::before, .gb-microapp-root *::after{box-sizing:border-box;} .gb-microapp-root .content-wrapper{width:100%;max-width:980px;margin:0 auto;padding:16px 16px 24px;animation:screenIn .8s ease-out both;} .gb-microapp-root .hero{text-align:center;padding:8px 4px 24px;} .gb-microapp-root .eyebrow{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:#5E5D53;margin-bottom:8px;font-weight:700;} .gb-microapp-root h1,.gb-microapp-root h2{font-family:Montserrat,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;margin:0;color:#363428;} .gb-microapp-root h1{font-size:32px;line-height:1.2;font-weight:700;} .gb-microapp-root .subtitle{margin:8px auto 0;max-width:32ch;font-size:16px;line-height:1.5;color:#5E5D53;} .gb-microapp-root .card{background:#F7F7F4;border:1px solid #D9D7CA;border-radius:20px;box-shadow:0 2px 8px rgba(0,0,0,.08);} .gb-microapp-root .gauge-card{width:100%;padding:20px 16px 16px;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:44px;border:none;appearance:none;-webkit-appearance:none;text-align:center;transition:transform 180ms ease,box-shadow 180ms ease,background-color 180ms ease;} .gb-microapp-root .gauge-card:focus-visible{outline:3px solid rgba(163,91,76,.28);outline-offset:3px;} .gb-microapp-root .gauge-card.pulse{transform:scale(.985);} .gb-microapp-root .gauge{position:relative;width:min(240px,78vw);height:min(240px,78vw);max-width:340px;max-height:340px;display:grid;place-items:center;margin:2px 0 6px;} .gb-microapp-root .gauge-ring,.gb-microapp-root .gauge-track,.gb-microapp-root .gauge-svg,.gb-microapp-root .gauge-center{position:absolute;inset:0;} .gb-microapp-root .gauge-ring{border-radius:50%;background:radial-gradient(circle at 50% 42%, rgba(163,91,76,.09), rgba(163,91,76,0) 58%);} .gb-microapp-root .gauge-track{border-radius:50%;background:conic-gradient(from -90deg, rgba(217,215,202,.8) 0deg, rgba(217,215,202,.8) 360deg);} .gb-microapp-root .gauge-svg{transform:rotate(-90deg);overflow:visible;} .gb-microapp-root .gauge-bg,.gb-microapp-root .gauge-progress{fill:none;stroke-linecap:round;stroke-width:10;} .gb-microapp-root .gauge-bg{stroke:#D9D7CA;} .gb-microapp-root .gauge-progress{stroke:#A35B4C;stroke-dasharray:326.725;stroke-dashoffset:326.725;transition:stroke-dashoffset 1200ms ease-out,stroke 200ms ease;filter:drop-shadow(0 2px 4px rgba(163,91,76,.18));} .gb-microapp-root .gauge-center{display:flex;align-items:center;justify-content:center;padding:34px;} .gb-microapp-root .percentage-wrap{text-align:center;transition:opacity 200ms ease,transform 200ms ease;} .gb-microapp-root .percentage{font-size:48px;line-height:1;font-weight:700;color:#A35B4C;font-family:Montserrat,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;} .gb-microapp-root .gauge-label{margin-top:8px;font-size:16px;line-height:1.4;color:#5E5D53;} .gb-microapp-root .tap-hint{margin-top:4px;font-size:14px;color:#5E5D53;} .gb-microapp-root .info-card{margin-top:24px;padding:20px 16px;} .gb-microapp-root .section-header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px;} .gb-microapp-root .section-header h2{font-size:20px;line-height:1.2;} .gb-microapp-root .status-badge{min-height:28px;padding:6px 12px;border-radius:999px;background:rgba(163,91,76,.12);color:#A35B4C;font-size:13px;font-weight:700;display:inline-flex;align-items:center;} .gb-microapp-root .date-label{font-size:16px;line-height:1.5;color:#5E5D53;margin-bottom:20px;} .gb-microapp-root .progress-block{margin-bottom:20px;} .gb-microapp-root .progress-meta{display:flex;align-items:center;justify-content:space-between;font-size:14px;color:#5E5D53;margin-bottom:10px;} .gb-microapp-root .progress-bar{height:14px;border-radius:999px;background:#D9D7CA;overflow:hidden;} .gb-microapp-root .progress-fill{width:0;height:100%;border-radius:999px;background:linear-gradient(90deg,#A35B4C,#B66B59);transition:width 900ms ease-out,background 200ms ease;} .gb-microapp-root .metrics-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;} .gb-microapp-root .metric{padding:16px;border-radius:16px;background:#FFFFFF;box-shadow:0 2px 8px rgba(0,0,0,.05);border:1px solid rgba(217,215,202,.8);min-height:88px;display:flex;flex-direction:column;justify-content:center;} .gb-microapp-root .metric-value{font-size:28px;line-height:1.1;font-weight:700;color:#363428;font-family:Montserrat,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;} .gb-microapp-root .metric-label{margin-top:6px;font-size:14px;line-height:1.4;color:#5E5D53;} .gb-microapp-root .context-line{margin-top:16px;font-size:14px;line-height:1.5;color:#5E5D53;} .gb-microapp-root .error-card{margin-top:24px;padding:20px 16px;text-align:center;background:#FFF8F6;border-color:rgba(163,91,76,.18);} .gb-microapp-root .error-card h2{font-size:20px;margin-bottom:8px;color:#A35B4C;} .gb-microapp-root .error-card p{margin:0;font-size:16px;line-height:1.5;color:#5E5D53;} .gb-microapp-root .hidden{display:none !important;} .gb-microapp-root.loading .percentage-wrap,.gb-microapp-root.loading .date-label,.gb-microapp-root.loading .metric-value,.gb-microapp-root.loading .progress-meta span:last-child{opacity:.45;} .gb-microapp-root.loading .gauge-progress,.gb-microapp-root.loading .progress-fill{transition:none;} .gb-microapp-root.loading .gauge-progress{stroke-dashoffset:326.725;} @keyframes screenIn{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}} @media (min-width:768px){.gb-microapp-root .content-wrapper{padding:24px 24px 32px;}.gb-microapp-root .hero{text-align:left;padding:8px 6px 24px;}.gb-microapp-root .subtitle{margin-left:0;max-width:40ch;}.gb-microapp-root .gauge-card{padding:24px;}.gb-microapp-root .gauge{width:300px;height:300px;}.gb-microapp-root .percentage{font-size:56px;}.gb-microapp-root .gauge-label{font-size:16px;}.gb-microapp-root .info-card{padding:24px;}.gb-microapp-root h1{font-size:36px;}.gb-microapp-root .section-header h2{font-size:22px;}.gb-microapp-root .metric-value{font-size:30px;}} @media (min-width:1024px){.gb-microapp-root .content-wrapper{padding:32px;}.gb-microapp-root .gauge{width:340px;height:340px;}.gb-microapp-root .percentage{font-size:60px;}.gb-microapp-root .metrics-grid{gap:20px;}.gb-microapp-root .metric{min-height:96px;}} @media (prefers-reduced-motion: reduce){.gb-microapp-root .content-wrapper,.gb-microapp-root .gauge-progress,.gb-microapp-root .progress-fill,.gb-microapp-root .percentage-wrap,.gb-microapp-root .gauge-card{animation:none;transition:none;}}
+</style>
+</head>
+<body>
+<div class="gb-microapp-root" role="application" aria-label="Year Progress">
+  <div class="content-wrapper" id="appShell">
+    <section class="hero" aria-labelledby="title">
+      <div class="eyebrow">Live yearly overview</div>
+      <h1 id="title">Year Progress</h1>
+      <p class="subtitle">How far we are through the current year.</p>
+    </section>
+
+    <button id="refreshButton" class="card gauge-card" type="button" aria-label="Refresh year progress">
+      <div class="gauge" aria-hidden="true">
+        <div class="gauge-ring"></div>
+        <div class="gauge-track"></div>
+        <svg class="gauge-svg" viewBox="0 0 120 120">
+          <circle class="gauge-bg" cx="60" cy="60" r="52"></circle>
+          <circle class="gauge-progress" cx="60" cy="60" r="52"></circle>
+        </svg>
+        <div class="gauge-center">
+          <div class="percentage-wrap" aria-live="polite" aria-atomic="true">
+            <div id="percentValue" class="percentage">0.0%</div>
+            <div id="gaugeLabel" class="gauge-label">of the year passed</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tap-hint">Tap to refresh</div>
+    </button>
+
+    <section class="card info-card" aria-labelledby="statusTitle">
+      <div class="section-header">
+        <h2 id="statusTitle">Today</h2>
+        <div id="statusBadge" class="status-badge">Updating</div>
+      </div>
+
+      <div id="dateLabel" class="date-label">—</div>
+
+      <div class="progress-block">
+        <div class="progress-meta">
+          <span>Year progress</span>
+          <span id="barValue">0.0%</span>
+        </div>
+        <div class="progress-bar" aria-hidden="true">
+          <div id="barFill" class="progress-fill"></div>
+        </div>
+      </div>
+
+      <div class="metrics-grid">
+        <div class="metric">
+          <div id="passedValue" class="metric-value">0.0%</div>
+          <div class="metric-label">Passed</div>
+        </div>
+        <div class="metric">
+          <div id="remainingValue" class="metric-value">100.0%</div>
+          <div class="metric-label">Remaining</div>
+        </div>
+      </div>
+
+      <div id="contextLine" class="context-line">Updates every minute</div>
+    </section>
+
+    <section id="errorCard" class="card error-card hidden" aria-live="polite">
+      <h2>Unable to calculate year progress</h2>
+      <p>Check the device date and time settings.</p>
+    </section>
+  </div>
+</div>
+
+<script>
+window.GB_PLUGIN_ID="9d589898-4d04-42f9-a535-36a9bece0dfb";
+var yearProgressState = { percent: 0, targetPercent: 0, rafId: null, intervalId: null, reducedMotion: false, pulseTimer: null };
+var gaugeCircumference = 326.725;
+var currentDisplayedPercent = 0;
+
+function initYearProgressWidget() {
+  var root = document.querySelector('.gb-microapp-root');
+  if (!root) return;
+
+  yearProgressState.reducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  bindYearProgressEvents();
+  updateYearProgress(true);
+  if (!yearProgressState.reducedMotion) {
+    yearProgressState.intervalId = window.setInterval(function () { updateYearProgress(false); }, 60000);
+  }
+}
+
+function bindYearProgressEvents() {
+  var refreshButton = document.getElementById('refreshButton');
+  if (refreshButton) {
+    refreshButton.addEventListener('click', handleYearProgressRefresh);
+    refreshButton.addEventListener('keydown', handleYearProgressKeydown);
+  }
+  document.addEventListener('visibilitychange', handleYearProgressVisibility);
+  window.addEventListener('resize', handleYearProgressResize);
+}
+
+function handleYearProgressRefresh() {
+  pulseGaugeRing();
+  updateYearProgress(true);
+}
+
+function handleYearProgressKeydown(e) {
+  if (e.key === 'Enter' || e.key === ' ') {
+    e.preventDefault();
+    handleYearProgressRefresh();
+  }
+}
+
+function handleYearProgressVisibility() {
+  if (!document.hidden) updateYearProgress(true);
+}
+
+function handleYearProgressResize() {
+  if (yearProgressState.rafId) cancelAnimationFrame(yearProgressState.rafId);
+  yearProgressState.rafId = requestAnimationFrame(function () {
+    updateYearProgress(false);
+  });
+}
+
+function pulseGaugeRing() {
+  var card = document.getElementById('refreshButton');
+  if (!card || yearProgressState.reducedMotion) return;
+  card.classList.add('pulse');
+  if (yearProgressState.pulseTimer) clearTimeout(yearProgressState.pulseTimer);
+  yearProgressState.pulseTimer = setTimeout(function () {
+    card.classList.remove('pulse');
+  }, 250);
+}
+
+function updateYearProgress(force) {
+  var root = document.querySelector('.gb-microapp-root');
+  var errorCard = document.getElementById('errorCard');
+  var mainCard = document.getElementById('refreshButton');
+  var now = new Date();
+  if (isNaN(now.getTime())) {
+    showYearProgressError();
+    return;
+  }
+
+  var yearStart = new Date(now.getFullYear(), 0, 1);
+  var nextYearStart = new Date(now.getFullYear() + 1, 0, 1);
+  var total = nextYearStart.getTime() - yearStart.getTime();
+  var elapsed = now.getTime() - yearStart.getTime();
+  var percent = Math.min(100, Math.max(0, (elapsed / total) * 100));
+  yearProgressState.targetPercent = percent;
+
+  if (root) root.classList.remove('loading');
+  if (errorCard) errorCard.classList.add('hidden');
+  if (mainCard) mainCard.classList.remove('hidden');
+
+  renderYearProgress(percent, now);
+  if (force) animateYearProgressNumber(currentDisplayedPercent, percent);
+  else setYearProgressValues(percent);
+}
+
+function renderYearProgress(percent, now) {
+  var percentValue = document.getElementById('percentValue');
+  var barValue = document.getElementById('barValue');
+  var passedValue = document.getElementById('passedValue');
+  var remainingValue = document.getElementById('remainingValue');
+  var gaugeProgress = document.querySelector('.gauge-progress');
+  var barFill = document.getElementById('barFill');
+  var dateLabel = document.getElementById('dateLabel');
+  var statusBadge = document.getElementById('statusBadge');
+  var gaugeLabel = document.getElementById('gaugeLabel');
+  var contextLine = document.getElementById('contextLine');
+
+  var passed = percent;
+  var remaining = 100 - percent;
+  var formatted = formatPercent(percent);
+  var passedFormatted = formatPercent(passed);
+  var remainingFormatted = formatPercent(remaining);
+  var monthDay = now.toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+
+  if (percentValue) percentValue.textContent = formatted;
+  if (barValue) barValue.textContent = formatted;
+  if (passedValue) passedValue.textContent = passedFormatted;
+  if (remainingValue) remainingValue.textContent = remainingFormatted;
+  if (dateLabel) dateLabel.textContent = monthDay;
+  if (barFill) barFill.style.width = formatted;
+  if (gaugeProgress) gaugeProgress.style.strokeDashoffset = gaugeCircumference - (gaugeCircumference * percent / 100);
+
+  if (percent < 1) {
+    if (statusBadge) statusBadge.textContent = 'Just beginning';
+    if (gaugeLabel) gaugeLabel.textContent = 'of the year passed';
+    if (contextLine) contextLine.textContent = 'A new year is just getting started.';
+  } else if (percent > 99) {
+    if (statusBadge) statusBadge.textContent = 'Almost complete';
+    if (gaugeLabel) gaugeLabel.textContent = 'of the year passed';
+    if (contextLine) contextLine.textContent = 'The year is nearly complete.';
+  } else {
+    if (statusBadge) statusBadge.textContent = 'Live';
+    if (gaugeLabel) gaugeLabel.textContent = 'of the year passed';
+    if (contextLine) contextLine.textContent = 'Updates every minute';
+  }
+}
+
+function setYearProgressValues(percent) {
+  currentDisplayedPercent = percent;
+}
+
+function animateYearProgressNumber(from, to) {
+  var start = performance.now();
+  var duration = yearProgressState.reducedMotion ? 1 : 600;
+
+  function step(now) {
+    var progress = Math.min(1, (now - start) / duration);
+    var eased = 1 - Math.pow(1 - progress, 3);
+    var value = from + (to - from) * eased;
+    currentDisplayedPercent = value;
+    updateDisplayedPercent(value);
+    if (progress < 1) requestAnimationFrame(step);
+    else currentDisplayedPercent = to;
+  }
+
+  requestAnimationFrame(step);
+}
+
+function updateDisplayedPercent(value) {
+  var percentValue = document.getElementById('percentValue');
+  var barValue = document.getElementById('barValue');
+  var passedValue = document.getElementById('passedValue');
+  var remainingValue = document.getElementById('remainingValue');
+  var barFill = document.getElementById('barFill');
+  var gaugeProgress = document.querySelector('.gauge-progress');
+  var formatted = formatPercent(value);
+  var remaining = 100 - value;
+
+  if (percentValue) percentValue.textContent = formatted;
+  if (barValue) barValue.textContent = formatted;
+  if (passedValue) passedValue.textContent = formatted;
+  if (remainingValue) remainingValue.textContent = formatPercent(remaining);
+  if (barFill) barFill.style.width = formatted;
+  if (gaugeProgress) gaugeProgress.style.strokeDashoffset = gaugeCircumference - (gaugeCircumference * value / 100);
+}
+
+function formatPercent(value) {
+  return Math.round(value * 10) / 10 + '%';
+}
+
+function showYearProgressError() {
+  var root = document.querySelector('.gb-microapp-root');
+  var errorCard = document.getElementById('errorCard');
+  var mainCard = document.getElementById('refreshButton');
+  if (root) root.classList.remove('loading');
+  if (mainCard) mainCard.classList.add('hidden');
+  if (errorCard) errorCard.classList.remove('hidden');
+}
+
+document.addEventListener('DOMContentLoaded', initYearProgressWidget);
+;(function () {
+  if (window.__gbOnAppearWatchdog) { return; }
+  window.__gbOnAppearWatchdog = true;
+  if (typeof window.gb === "undefined" || typeof gb.onappear !== "function") { return; }
+  var original = gb.onappear;
+  var fired = false;
+  gb.onappear = function () { fired = true; return original.apply(this, arguments); };
+  setTimeout(function () {
+    if (!fired) { try { gb.onappear(); } catch (e) {} }
+  }, 1200);
+})();
+</script>
+</body>
