@@ -1,0 +1,558 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Groceries</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #f5f5f5;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    min-height: 100vh;
+    padding: 16px;
+  }
+
+  .wrap { max-width: 480px; margin: 0 auto; }
+
+  /* ── TITLE ── */
+  .page-title {
+    font-size: 22px;
+    font-weight: 700;
+    color: #222;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+  }
+
+  .descriptor {
+    font-size: 13px;
+    color: #888;
+    line-height: 1.5;
+    margin-bottom: 14px;
+  }
+
+  /* ── CARD ── */
+  .card {
+    background: #fff;
+    border-radius: 14px;
+    padding: 16px;
+    box-shadow: 0 1px 4px rgba(0,0,0,.08);
+    margin-bottom: 12px;
+  }
+
+  /* ── INPUT ROW ── */
+  .input-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+
+  .input-row input[type="text"] {
+    flex: 1;
+    min-height: 44px;
+    border: 1.5px solid #ddd;
+    border-radius: 10px;
+    padding: 10px 12px;
+    font-size: 15px;
+    background: #fafafa;
+    color: #1a1a1a;
+    outline: none;
+    font-family: inherit;
+    transition: border-color .15s, box-shadow .15s;
+  }
+
+  .input-row input[type="text"]:focus {
+    border-color: #343D46;
+    box-shadow: 0 0 0 3px rgba(52,61,70,.1);
+  }
+
+  .input-row input::placeholder { color: #bbb; }
+
+  .btn-add {
+    min-height: 44px;
+    padding: 0 16px;
+    background: #343D46;
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    font-family: inherit;
+    transition: opacity .15s;
+  }
+
+  .btn-add:active { opacity: .8; }
+
+  /* ── QUICK ADD ── */
+  .quick-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    color: #999;
+    margin-bottom: 8px;
+  }
+
+  .quick-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+  }
+
+  .pill {
+    background: #f0f0f0;
+    border: none;
+    border-radius: 14px;
+    padding: 6px 13px;
+    font-size: 13px;
+    color: #444;
+    cursor: pointer;
+    font-family: inherit;
+    transition: background .15s, color .15s;
+  }
+
+  .pill:hover { background: #343D46; color: #fff; }
+
+  /* ── PROGRESS ── */
+  .progress-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: #888;
+    margin-bottom: 6px;
+  }
+
+  .progress-bar {
+    height: 6px;
+    border-radius: 99px;
+    background: #e8e8e8;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    width: 0%;
+    border-radius: 99px;
+    background: #343D46;
+    transition: width .3s ease-out;
+  }
+
+  /* ── LIST ── */
+  .list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .item {
+    background: #fafafa;
+    border-radius: 10px;
+    padding: 10px 12px;
+  }
+
+  .item-top {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .item-check {
+    width: 18px;
+    height: 18px;
+    accent-color: #343D46;
+    flex: 0 0 auto;
+    cursor: pointer;
+  }
+
+  .item-text {
+    flex: 1;
+    font-size: 15px;
+    color: #1a1a1a;
+    word-break: break-word;
+  }
+
+  .item.checked .item-text {
+    text-decoration: line-through;
+    color: #bbb;
+  }
+
+  .item-delete {
+    width: 36px;
+    height: 36px;
+    background: transparent;
+    border: none;
+    color: #ccc;
+    font-size: 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+    transition: color .15s;
+  }
+
+  .item-delete:hover { color: #c0392b; }
+
+  /* ── ITEM CONTROLS ── */
+  .item-controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 8px;
+    padding-left: 28px;
+    flex-wrap: wrap;
+  }
+
+  .qty-group, .price-wrap {
+    display: flex;
+    align-items: center;
+    border: 1.5px solid #ddd;
+    border-radius: 8px;
+    background: #fff;
+    overflow: hidden;
+  }
+
+  .qty-btn {
+    width: 30px;
+    height: 30px;
+    background: #fff;
+    border: none;
+    color: #343D46;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background .15s;
+  }
+
+  .qty-btn:hover { background: #f0f0f0; }
+
+  .qty-display {
+    min-width: 24px;
+    text-align: center;
+    font-size: 14px;
+    font-weight: 600;
+    color: #1a1a1a;
+  }
+
+  .price-symbol {
+    padding: 0 6px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    background: #f5f5f5;
+    color: #999;
+    font-size: 13px;
+    border-right: 1px solid #ddd;
+  }
+
+  .price-input {
+    width: 70px;
+    height: 30px;
+    border: none;
+    outline: none;
+    padding: 0 6px;
+    font-size: 14px;
+    color: #1a1a1a;
+    background: #fff;
+    font-family: inherit;
+  }
+
+  .item-subtotal {
+    margin-left: auto;
+    font-size: 13px;
+    font-weight: 600;
+    color: #343D46;
+    white-space: nowrap;
+  }
+
+  /* ── TOTAL BAR ── */
+  .total-bar {
+    display: none;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 14px;
+    background: #f0f0f0;
+    border-radius: 10px;
+    margin-bottom: 10px;
+  }
+
+  .total-bar.visible { display: flex; }
+
+  .total-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #555;
+  }
+
+  .total-amount {
+    font-size: 20px;
+    font-weight: 700;
+    color: #343D46;
+  }
+
+  /* ── ACTIONS ── */
+  .actions {
+    display: none;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+
+  .actions.visible { display: flex; }
+
+  .btn-secondary {
+    flex: 1;
+    min-height: 38px;
+    background: #f0f0f0;
+    border: none;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #444;
+    cursor: pointer;
+    font-family: inherit;
+    transition: background .15s, color .15s;
+  }
+
+  .btn-secondary:hover { background: #343D46; color: #fff; }
+
+  /* ── EMPTY STATE ── */
+  .empty-state {
+    text-align: center;
+    color: #bbb;
+    font-size: 14px;
+    padding: 20px 0;
+    line-height: 1.6;
+  }
+
+  .footer-note {
+    text-align: center;
+    font-size: 11px;
+    color: #bbb;
+    margin-top: 4px;
+  }
+
+  @keyframes itemIn { from { opacity: 0; transform: scale(.98); } to { opacity: 1; transform: scale(1); } }
+  .anim-in { animation: itemIn .2s ease-out both; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="page-title">🛒 My Groceries</div>
+  <p class="descriptor">Keep your shopping organized with fast add, quantities, and running totals.</p>
+
+  <!-- INPUT -->
+  <div class="card">
+    <div class="input-row">
+      <input type="text" id="groceryInput" inputmode="text" placeholder="Add an item..." autocomplete="off" aria-label="Add an item" />
+      <button class="btn-add" id="addButton" type="button">+ Add</button>
+    </div>
+  </div>
+
+  <!-- QUICK ADD -->
+  <div class="card">
+    <div class="quick-label">Quick Add</div>
+    <div class="quick-pills" id="quickPills">
+      <button class="pill" data-item="Milk" type="button">+ Milk</button>
+      <button class="pill" data-item="Eggs" type="button">+ Eggs</button>
+      <button class="pill" data-item="Butter" type="button">+ Butter</button>
+      <button class="pill" data-item="Cheese" type="button">+ Cheese</button>
+      <button class="pill" data-item="Chicken" type="button">+ Chicken</button>
+      <button class="pill" data-item="Ground Beef" type="button">+ Ground Beef</button>
+      <button class="pill" data-item="Bread" type="button">+ Bread</button>
+      <button class="pill" data-item="Pasta" type="button">+ Pasta</button>
+      <button class="pill" data-item="Rice" type="button">+ Rice</button>
+      <button class="pill" data-item="Bananas" type="button">+ Bananas</button>
+      <button class="pill" data-item="Apples" type="button">+ Apples</button>
+      <button class="pill" data-item="Toilet Paper" type="button">+ Toilet Paper</button>
+    </div>
+  </div>
+
+  <!-- PROGRESS -->
+  <div class="card">
+    <div class="progress-row">
+      <span id="progressText">0 of 0 checked off</span>
+      <span id="progressPercent">0%</span>
+    </div>
+    <div class="progress-bar">
+      <div class="progress-fill" id="progressFill"></div>
+    </div>
+  </div>
+
+  <!-- TOTAL BAR -->
+  <div class="total-bar" id="totalBar">
+    <span class="total-label">Estimated Total</span>
+    <span class="total-amount" id="totalAmount">$0.00</span>
+  </div>
+
+  <!-- ACTIONS -->
+  <div class="actions" id="actions">
+    <button class="btn-secondary" id="clearCheckedButton" type="button">Clear Checked</button>
+    <button class="btn-secondary" id="clearAllButton" type="button">Clear All</button>
+  </div>
+
+  <!-- LIST -->
+  <div class="card">
+    <div class="list" id="groceryList" aria-live="polite"></div>
+  </div>
+
+  <div class="footer-note">Saved on this device only.</div>
+
+</div>
+<script>
+(function() {
+  var STORAGE_KEY = 'myGroceries_v1';
+  var items = [];
+
+  function load() {
+    try { var r = localStorage.getItem(STORAGE_KEY); items = r ? JSON.parse(r) : []; } catch(e) { items = []; }
+    renderAll();
+  }
+
+  function save() {
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(items)); } catch(e) {}
+  }
+
+  function makeId() { return Date.now() + '_' + Math.floor(Math.random() * 100000); }
+  function money(v) { var n = Number(v); return '$' + (isFinite(n) ? n : 0).toFixed(2); }
+
+  function addItem(name) {
+    var text = String(name || '').replace(/\s+/g, ' ').trim();
+    if (!text) return;
+    items.push({ text: text, checked: false, qty: 1, price: '', id: makeId() });
+    save(); renderAll();
+  }
+
+  function addFromInput() {
+    var inp = document.getElementById('groceryInput');
+    addItem(inp.value); inp.value = ''; inp.focus();
+  }
+
+  function toggleItem(id) {
+    items.forEach(function(it) { if (it.id === id) it.checked = !it.checked; });
+    save(); renderAll();
+  }
+
+  function changeQty(id, delta) {
+    items.forEach(function(it) { if (it.id === id) it.qty = Math.max(1, (parseInt(it.qty, 10) || 1) + delta); });
+    save(); renderAll();
+  }
+
+  function updatePrice(id, val) {
+    items.forEach(function(it) { if (it.id === id) it.price = String(val || ''); });
+    save(); renderTotals();
+  }
+
+  function deleteItem(id) {
+    items = items.filter(function(it) { return it.id !== id; });
+    save(); renderAll();
+  }
+
+  function clearChecked() {
+    items = items.filter(function(it) { return !it.checked; });
+    save(); renderAll();
+  }
+
+  function clearAll() { items = []; save(); renderAll(); }
+
+  function renderTotals() {
+    var total = 0; var hasPrice = false; var done = 0;
+    items.forEach(function(it) {
+      if (it.checked) done++;
+      var p = parseFloat(it.price); var q = parseInt(it.qty, 10) || 1;
+      if (!isNaN(p) && p > 0) { hasPrice = true; total += p * q; }
+    });
+    var pct = items.length ? Math.round(done / items.length * 100) : 0;
+    document.getElementById('progressText').textContent = done + ' of ' + items.length + ' checked off';
+    document.getElementById('progressPercent').textContent = pct + '%';
+    document.getElementById('progressFill').style.width = pct + '%';
+    var tb = document.getElementById('totalBar');
+    if (hasPrice && items.length) {
+      tb.classList.add('visible');
+      document.getElementById('totalAmount').textContent = money(total);
+    } else {
+      tb.classList.remove('visible');
+    }
+    document.getElementById('actions').classList.toggle('visible', items.length > 0);
+  }
+
+  function createItemNode(item) {
+    var art = document.createElement('article');
+    art.className = 'item anim-in' + (item.checked ? ' checked' : '');
+
+    var top = document.createElement('div'); top.className = 'item-top';
+
+    var cb = document.createElement('input'); cb.type = 'checkbox'; cb.className = 'item-check'; cb.checked = !!item.checked;
+    cb.setAttribute('aria-label', 'Mark ' + item.text + ' complete');
+    cb.addEventListener('change', function() { toggleItem(item.id); });
+
+    var txt = document.createElement('span'); txt.className = 'item-text'; txt.textContent = item.text;
+
+    var del = document.createElement('button'); del.type = 'button'; del.className = 'item-delete';
+    del.textContent = '×'; del.setAttribute('aria-label', 'Delete');
+    del.addEventListener('click', function() { deleteItem(item.id); });
+
+    top.appendChild(cb); top.appendChild(txt); top.appendChild(del);
+
+    var ctrl = document.createElement('div'); ctrl.className = 'item-controls';
+
+    var qg = document.createElement('div'); qg.className = 'qty-group';
+    var minus = document.createElement('button'); minus.type = 'button'; minus.className = 'qty-btn'; minus.textContent = '−';
+    minus.addEventListener('click', function() { changeQty(item.id, -1); });
+    var qd = document.createElement('span'); qd.className = 'qty-display'; qd.textContent = String(item.qty || 1);
+    var plus = document.createElement('button'); plus.type = 'button'; plus.className = 'qty-btn'; plus.textContent = '+';
+    plus.addEventListener('click', function() { changeQty(item.id, 1); });
+    qg.appendChild(minus); qg.appendChild(qd); qg.appendChild(plus);
+
+    var pw = document.createElement('div'); pw.className = 'price-wrap';
+    var sym = document.createElement('span'); sym.className = 'price-symbol'; sym.textContent = '$';
+    var pi = document.createElement('input'); pi.type = 'number'; pi.className = 'price-input';
+    pi.placeholder = '0.00'; pi.min = '0'; pi.step = '0.01'; pi.value = item.price || '';
+    pi.setAttribute('aria-label', 'Price for ' + item.text);
+    pi.addEventListener('input', function() { updatePrice(item.id, pi.value); });
+    pw.appendChild(sym); pw.appendChild(pi);
+
+    var sub = document.createElement('span'); sub.className = 'item-subtotal';
+    var p2 = parseFloat(item.price); var q2 = parseInt(item.qty, 10) || 1;
+    sub.textContent = (!isNaN(p2) && p2 > 0) ? money(p2 * q2) : '';
+
+    ctrl.appendChild(qg); ctrl.appendChild(pw); ctrl.appendChild(sub);
+    art.appendChild(top); art.appendChild(ctrl);
+    return art;
+  }
+
+  function renderList() {
+    var list = document.getElementById('groceryList'); list.innerHTML = '';
+    if (!items.length) {
+      var em = document.createElement('div'); em.className = 'empty-state';
+      em.textContent = 'Your list is empty. Add items above or tap Quick Add.';
+      list.appendChild(em); return;
+    }
+    items.forEach(function(item) { list.appendChild(createItemNode(item)); });
+  }
+
+  function renderAll() { renderTotals(); renderList(); }
+
+  document.getElementById('addButton').addEventListener('click', addFromInput);
+  document.getElementById('groceryInput').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') { e.preventDefault(); addFromInput(); }
+  });
+  document.getElementById('quickPills').addEventListener('click', function(e) {
+    var t = e.target; if (t && t.getAttribute('data-item')) addItem(t.getAttribute('data-item'));
+  });
+  document.getElementById('clearCheckedButton').addEventListener('click', clearChecked);
+  document.getElementById('clearAllButton').addEventListener('click', clearAll);
+
+  load();
+})();
+</script>
+</body>
+</html>
