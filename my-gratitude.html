@@ -1,0 +1,562 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Gratitude</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #f5f5f5;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    min-height: 100vh;
+    padding: 16px;
+  }
+
+  .wrap { max-width: 560px; margin: 0 auto; }
+
+  /* ── TITLE ── */
+  .page-title {
+    font-size: 22px;
+    font-weight: 700;
+    color: #222;
+    margin-bottom: 6px;
+  }
+
+  .descriptor {
+    font-size: 13px;
+    color: #888;
+    line-height: 1.5;
+    margin-bottom: 20px;
+  }
+
+  /* ── REFLECTION CARD ── */
+  .card {
+    background: #fff;
+    border-radius: 18px;
+    padding: 22px 20px;
+    box-shadow: 0 1px 4px rgba(0,0,0,.08);
+    margin-bottom: 14px;
+  }
+
+  .section-kicker {
+    font-size: 12px;
+    font-weight: 700;
+    color: #343D46;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    margin-bottom: 4px;
+  }
+
+  .panel-heading {
+    font-size: 18px;
+    font-weight: 700;
+    color: #222;
+    margin-bottom: 18px;
+  }
+
+  /* ── FIELDS ── */
+  .field-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 14px;
+  }
+
+  .field-group label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #444;
+  }
+
+  textarea {
+    width: 100%;
+    min-height: 64px;
+    resize: vertical;
+    border: 1.5px solid #ddd;
+    border-radius: 14px;
+    background: #fafafa;
+    color: #1a1a1a;
+    font: inherit;
+    font-size: 15px;
+    line-height: 1.5;
+    padding: 12px 14px;
+    outline: none;
+    transition: border-color .16s ease, box-shadow .16s ease, background .16s ease;
+  }
+
+  textarea::placeholder { color: #bbb; }
+
+  textarea:focus {
+    border-color: #343D46;
+    background: #fff;
+    box-shadow: 0 0 0 3px rgba(52,61,70,.1);
+  }
+
+  /* ── SAVE BUTTON ── */
+  .save-button {
+    width: 100%;
+    min-height: 48px;
+    margin-top: 4px;
+    border: none;
+    border-radius: 999px;
+    background: #343D46;
+    color: #fff;
+    font-size: 15px;
+    font-weight: 700;
+    padding: 14px 20px;
+    cursor: pointer;
+    transition: transform .12s ease, opacity .18s ease;
+    font-family: inherit;
+  }
+
+  .save-button:active { transform: scale(.98); }
+  .save-button:disabled { opacity: .5; cursor: default; }
+
+  /* ── SUCCESS / ERROR ── */
+  .success-message, .error-notice {
+    min-height: 20px;
+    margin-top: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    opacity: 0;
+    transform: translateY(-4px);
+    transition: opacity .18s ease, transform .18s ease;
+  }
+
+  .success-message { color: #3b7d0f; }
+  .success-message.visible { opacity: 1; transform: translateY(0); }
+  .success-message.hiding { opacity: 0; transition-duration: .25s; }
+
+  .error-notice {
+    display: none;
+    color: #444;
+    background: #fdf3e7;
+    border: 1px solid #f0dcb8;
+    border-radius: 12px;
+    padding: 10px 12px;
+  }
+  .error-notice.visible { display: block; opacity: 1; transform: translateY(0); }
+
+  /* ── HISTORY ── */
+  .history-heading {
+    font-size: 18px;
+    font-weight: 700;
+    color: #222;
+    margin: 24px 0 14px;
+    padding: 0 2px;
+  }
+
+  .entries-list {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .entry-card {
+    background: #fff;
+    border-radius: 16px;
+    padding: 18px;
+    box-shadow: 0 1px 4px rgba(0,0,0,.06);
+    transition: opacity .22s ease, transform .22s ease;
+  }
+
+  .entry-card.entry-new { animation: newEntryIn .32s ease-out both; }
+  .entry-card.exiting { opacity: 0; transform: translateX(-12px) scale(.98); }
+
+  .entry-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+
+  .entry-date {
+    font-size: 13px;
+    font-weight: 700;
+    color: #343D46;
+  }
+
+  .delete-request {
+    background: #f0f0f0;
+    color: #222;
+    border: none;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 700;
+    padding: 8px 14px;
+    cursor: pointer;
+    transition: background .18s ease, transform .12s ease;
+    font-family: inherit;
+  }
+
+  .delete-request:active { transform: scale(.98); }
+
+  .gratitude-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .gratitude-list li {
+    position: relative;
+    padding-left: 22px;
+    font-size: 15px;
+    line-height: 1.5;
+    color: #1a1a1a;
+  }
+
+  .gratitude-list li::before {
+    content: '';
+    position: absolute;
+    left: 2px;
+    top: .65em;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #343D46;
+  }
+
+  /* ── CONFIRM ROW ── */
+  .confirm-row {
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    margin-top: 0;
+    border-top: 1px solid #eee;
+    transition: max-height .22s ease-in-out, opacity .22s ease-in-out, margin-top .22s ease-in-out, padding-top .22s ease-in-out;
+  }
+
+  .confirm-row.visible {
+    max-height: 96px;
+    opacity: 1;
+    margin-top: 14px;
+    padding-top: 14px;
+  }
+
+  .confirm-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .confirm-content p {
+    font-size: 14px;
+    font-weight: 700;
+    color: #222;
+  }
+
+  .confirm-actions { display: flex; gap: 8px; }
+
+  .cancel-button, .confirm-button {
+    min-height: 38px;
+    border: none;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 700;
+    padding: 8px 14px;
+    cursor: pointer;
+    transition: transform .12s ease, background .18s ease;
+    font-family: inherit;
+  }
+
+  .cancel-button { background: #f0f0f0; color: #222; }
+  .confirm-button { background: #c0392b; color: #fff; }
+  .cancel-button:active, .confirm-button:active { transform: scale(.98); }
+
+  /* ── EMPTY STATE ── */
+  .empty-card {
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 1px 4px rgba(0,0,0,.06);
+    min-height: 120px;
+    padding: 28px 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: #888;
+  }
+
+  .empty-mark {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 10px;
+    background: #f0f0f0;
+    color: #343D46;
+    font-size: 18px;
+    font-weight: 700;
+  }
+
+  .empty-card p { font-size: 14px; line-height: 1.5; max-width: 280px; }
+
+  @keyframes newEntryIn {
+    from { opacity: 0; transform: translateY(-10px) scale(.98); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="page-title">📓 My Gratitude</div>
+  <p class="descriptor">Write simple moments, kind people, tiny wins, or anything that made today lighter.</p>
+
+  <!-- REFLECTION CARD -->
+  <div class="card">
+    <div class="section-kicker">Today's Reflection</div>
+    <div class="panel-heading">Small joys count.</div>
+
+    <form id="gratitudeForm" aria-label="Today's reflection form">
+      <div class="field-group">
+        <label for="gratitudeOne">First gratitude item</label>
+        <textarea id="gratitudeOne" rows="2" placeholder="1. A moment, person, or thing…"></textarea>
+      </div>
+      <div class="field-group">
+        <label for="gratitudeTwo">Second gratitude item</label>
+        <textarea id="gratitudeTwo" rows="2" placeholder="2. Something that helped you today…"></textarea>
+      </div>
+      <div class="field-group">
+        <label for="gratitudeThree">Third gratitude item</label>
+        <textarea id="gratitudeThree" rows="2" placeholder="3. One small joy…"></textarea>
+      </div>
+      <button id="saveButton" class="save-button" type="submit" disabled>Save Today's Gratitude</button>
+      <p id="successMessage" class="success-message" aria-live="polite"></p>
+      <p id="errorNotice" class="error-notice" role="status" aria-live="polite"></p>
+    </form>
+  </div>
+
+  <!-- HISTORY -->
+  <p class="history-heading">Previous Entries</p>
+  <div id="entriesList" class="entries-list" aria-live="polite"></div>
+
+</div>
+<script>
+(function() {
+  var STORAGE_KEY = 'myGratitude_v1';
+  var entries = [];
+  var pendingDeleteId = '';
+  var exitingDeleteId = '';
+  var newestEntryId = '';
+  var successTimer = 0, successHideTimer = 0;
+
+  function load() {
+    try {
+      var raw = localStorage.getItem(STORAGE_KEY);
+      entries = raw ? JSON.parse(raw) : [];
+    } catch(e) { entries = []; }
+    render();
+    updateSaveButton();
+  }
+
+  function save() {
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(entries)); } catch(e) {}
+  }
+
+  function makeId() { return 'g-' + Date.now().toString(36) + '-' + Math.floor(Math.random() * 100000).toString(36); }
+
+  function formatDate(iso) {
+    var date = new Date(iso);
+    var now = new Date();
+    var options = (date.getFullYear() === now.getFullYear())
+      ? { weekday: 'long', month: 'long', day: 'numeric' }
+      : { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' };
+    return new Intl.DateTimeFormat(undefined, options).format(date);
+  }
+
+  function allInputsReady() {
+    var one = document.getElementById('gratitudeOne');
+    var two = document.getElementById('gratitudeTwo');
+    var three = document.getElementById('gratitudeThree');
+    return one.value.trim().length > 0 && two.value.trim().length > 0 && three.value.trim().length > 0;
+  }
+
+  function updateSaveButton() {
+    var button = document.getElementById('saveButton');
+    button.disabled = !allInputsReady();
+  }
+
+  function handleSaveSubmit(event) {
+    event.preventDefault();
+    if (!allInputsReady()) { updateSaveButton(); return; }
+
+    var one = document.getElementById('gratitudeOne');
+    var two = document.getElementById('gratitudeTwo');
+    var three = document.getElementById('gratitudeThree');
+    var createdAt = new Date().toISOString();
+
+    var entry = {
+      id: makeId(),
+      createdAt: createdAt,
+      displayDate: formatDate(createdAt),
+      items: [one.value.trim(), two.value.trim(), three.value.trim()]
+    };
+
+    entries.unshift(entry);
+    newestEntryId = entry.id;
+    pendingDeleteId = '';
+    exitingDeleteId = '';
+    save();
+
+    one.value = ''; two.value = ''; three.value = '';
+    hideErrorNotice();
+    render();
+    updateSaveButton();
+    showSuccessMessage();
+    window.setTimeout(function() { newestEntryId = ''; }, 360);
+  }
+
+  function showSuccessMessage() {
+    var message = document.getElementById('successMessage');
+    clearSuccessTimers();
+    message.textContent = 'Saved — take that warmth with you.';
+    message.classList.remove('hiding');
+    message.classList.add('visible');
+    successTimer = window.setTimeout(function() {
+      message.classList.add('hiding');
+      successHideTimer = window.setTimeout(function() {
+        message.classList.remove('visible');
+        message.classList.remove('hiding');
+        message.textContent = '';
+      }, 250);
+    }, 3000);
+  }
+
+  function clearSuccessTimers() {
+    if (successTimer) { window.clearTimeout(successTimer); successTimer = 0; }
+    if (successHideTimer) { window.clearTimeout(successHideTimer); successHideTimer = 0; }
+  }
+
+  function hideErrorNotice() {
+    var notice = document.getElementById('errorNotice');
+    notice.textContent = '';
+    notice.classList.remove('visible');
+  }
+
+  function render() {
+    var list = document.getElementById('entriesList');
+    list.innerHTML = '';
+
+    if (entries.length === 0) {
+      var card = document.createElement('article');
+      card.className = 'empty-card';
+      card.innerHTML = '<div class="empty-mark">✦</div><p>No entries yet. Start with three small joys from today.</p>';
+      list.appendChild(card);
+      return;
+    }
+
+    entries.forEach(function(entry) {
+      list.appendChild(createEntryCard(entry));
+    });
+  }
+
+  function createEntryCard(entry) {
+    var card = document.createElement('article');
+    card.className = 'entry-card';
+    if (entry.id === newestEntryId) card.className += ' entry-new';
+    if (entry.id === exitingDeleteId) card.className += ' exiting';
+    card.setAttribute('data-id', entry.id);
+
+    var top = document.createElement('div');
+    top.className = 'entry-top';
+
+    var date = document.createElement('p');
+    date.className = 'entry-date';
+    date.textContent = entry.displayDate || formatDate(entry.createdAt);
+
+    var deleteBtn = document.createElement('button');
+    deleteBtn.type = 'button';
+    deleteBtn.className = 'delete-request';
+    deleteBtn.textContent = 'Delete';
+    deleteBtn.addEventListener('click', function() { pendingDeleteId = entry.id; render(); });
+
+    top.appendChild(date);
+    top.appendChild(deleteBtn);
+
+    var ul = document.createElement('ul');
+    ul.className = 'gratitude-list';
+    entry.items.forEach(function(item) {
+      var li = document.createElement('li');
+      li.textContent = item;
+      ul.appendChild(li);
+    });
+
+    var confirmRow = createConfirmRow(entry.id);
+    if (entry.id === pendingDeleteId) confirmRow.classList.add('visible');
+
+    card.appendChild(top);
+    card.appendChild(ul);
+    card.appendChild(confirmRow);
+    return card;
+  }
+
+  function createConfirmRow(id) {
+    var row = document.createElement('div');
+    row.className = 'confirm-row';
+
+    var content = document.createElement('div');
+    content.className = 'confirm-content';
+
+    var prompt = document.createElement('p');
+    prompt.textContent = 'Delete this entry?';
+
+    var actions = document.createElement('div');
+    actions.className = 'confirm-actions';
+
+    var cancel = document.createElement('button');
+    cancel.type = 'button';
+    cancel.className = 'cancel-button';
+    cancel.textContent = 'Cancel';
+    cancel.addEventListener('click', function() { pendingDeleteId = ''; render(); });
+
+    var confirm = document.createElement('button');
+    confirm.type = 'button';
+    confirm.className = 'confirm-button';
+    confirm.textContent = 'Delete';
+    confirm.addEventListener('click', function() { confirmDeleteEntry(id); });
+
+    actions.appendChild(cancel);
+    actions.appendChild(confirm);
+    content.appendChild(prompt);
+    content.appendChild(actions);
+    row.appendChild(content);
+    return row;
+  }
+
+  function confirmDeleteEntry(id) {
+    var index = entries.findIndex(function(e) { return e.id === id; });
+    if (index < 0) return;
+    entries.splice(index, 1);
+    save();
+    pendingDeleteId = '';
+    exitingDeleteId = id;
+
+    var card = document.querySelector('.entry-card[data-id="' + id + '"]');
+    if (card) card.classList.add('exiting');
+
+    window.setTimeout(function() {
+      exitingDeleteId = '';
+      render();
+    }, 220);
+  }
+
+  document.getElementById('gratitudeForm').addEventListener('submit', handleSaveSubmit);
+  document.getElementById('gratitudeOne').addEventListener('input', updateSaveButton);
+  document.getElementById('gratitudeTwo').addEventListener('input', updateSaveButton);
+  document.getElementById('gratitudeThree').addEventListener('input', updateSaveButton);
+
+  load();
+})();
+</script>
+</body>
+</html>
