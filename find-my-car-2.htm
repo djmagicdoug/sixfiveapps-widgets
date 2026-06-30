@@ -1,0 +1,459 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Find My Car</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #f5f5f5;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    min-height: 100vh;
+    padding: 16px;
+  }
+
+  .wrap { max-width: 480px; margin: 0 auto; }
+
+  /* ── TITLE ── */
+  .page-title {
+    font-size: 22px;
+    font-weight: 700;
+    color: #222;
+    margin-bottom: 6px;
+  }
+
+  .descriptor {
+    font-size: 13px;
+    color: #888;
+    line-height: 1.5;
+    margin-bottom: 14px;
+  }
+
+  /* ── CARD ── */
+  .card {
+    background: #fff;
+    border-radius: 14px;
+    padding: 16px;
+    box-shadow: 0 1px 4px rgba(0,0,0,.08);
+    margin-bottom: 12px;
+  }
+
+  /* ── MAP CARD ── */
+  .map-card {
+    height: 200px;
+    border-radius: 14px;
+    overflow: hidden;
+    position: relative;
+    background: #ececec;
+    margin-bottom: 12px;
+  }
+
+  .map-card svg { width: 100%; height: 100%; display: block; }
+
+  .map-pin-wrap {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,.22));
+  }
+
+  .pin-head {
+    width: 30px; height: 30px;
+    border-radius: 50% 50% 50% 0;
+    transform: rotate(-45deg);
+    background: #343D46;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  .pin-head.saved { background: #3b7d0f; }
+
+  .pin-dot { width: 10px; height: 10px; border-radius: 50%; background: #fff; transform: rotate(45deg); }
+
+  .pin-shadow { width: 12px; height: 6px; background: rgba(0,0,0,.18); border-radius: 50%; margin-top: 3px; }
+
+  .pulse-ring {
+    position: absolute; top: 50%; left: 50%;
+    width: 38px; height: 38px;
+    border-radius: 50%;
+    background: rgba(52,61,70,.16);
+    transform: translate(-50%, -50%);
+    animation: pulse 2s ease-out infinite;
+  }
+
+  .pulse-ring.saved { background: rgba(59,125,15,.16); }
+
+  @keyframes pulse {
+    0% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+    100% { transform: translate(-50%, -50%) scale(3.2); opacity: 0; }
+  }
+
+  /* ── STATUS PILLS ── */
+  .status-row { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+
+  .status-pill {
+    font-size: 11px;
+    font-weight: 700;
+    background: #f5f5f5;
+    color: #555;
+    padding: 5px 10px;
+    border-radius: 999px;
+  }
+
+  /* ── NOTES INPUT ── */
+  .note-input {
+    width: 100%;
+    margin-top: 10px;
+    padding: 12px 14px;
+    border-radius: 10px;
+    border: 1.5px solid #ddd;
+    background: #fafafa;
+    font-size: 15px;
+    color: #1a1a1a;
+    outline: none;
+    font-family: inherit;
+    transition: border-color .16s, box-shadow .16s;
+  }
+
+  .note-input::placeholder { color: #bbb; }
+  .note-input:focus { border-color: #343D46; box-shadow: 0 0 0 3px rgba(52,61,70,.1); }
+
+  /* ── BUTTONS ── */
+  .primary-btn {
+    width: 100%;
+    padding: 14px;
+    border: none;
+    border-radius: 10px;
+    background: #343D46;
+    color: #fff;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    margin-bottom: 10px;
+    transition: opacity .16s, transform .16s;
+    font-family: inherit;
+  }
+
+  .primary-btn:active { transform: translateY(1px); opacity: .9; }
+
+  .success-btn { background: #3b7d0f; }
+
+  .clear-btn {
+    width: 100%;
+    padding: 12px;
+    border: 1.5px solid #343D46;
+    border-radius: 10px;
+    background: #fff;
+    color: #343D46;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    margin-bottom: 10px;
+    transition: background .16s;
+    font-family: inherit;
+  }
+
+  .clear-btn:hover { background: #f0f0f0; }
+
+  /* ── SAVED INFO ── */
+  .saved-time { font-size: 18px; font-weight: 700; color: #1a1a1a; margin-bottom: 4px; }
+  .saved-coords { font-size: 12px; color: #999; font-family: 'Courier New', monospace; margin-bottom: 8px; }
+  .saved-notes {
+    display: none;
+    border-top: 1px solid #eee;
+    padding-top: 10px;
+    font-size: 14px;
+    line-height: 1.4;
+    color: #555;
+  }
+
+  /* ── ERROR CARD ── */
+  .error-card { background: #fdf3e7; border: 1px solid #f0dcb8; }
+  .error-card .card-title { color: #9c5a20; }
+
+  .card-title { font-size: 14px; font-weight: 700; margin-bottom: 6px; color: #222; }
+  .card-text { font-size: 13px; line-height: 1.5; color: #888; }
+
+  .view { display: none; }
+  .view.active { display: block; }
+
+  /* ── TOAST ── */
+  .toast {
+    position: fixed;
+    left: 50%;
+    bottom: 24px;
+    transform: translateX(-50%);
+    background: rgba(30,30,30,.92);
+    color: #fff;
+    font-size: 13px;
+    padding: 10px 18px;
+    border-radius: 999px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .25s;
+    z-index: 99;
+  }
+
+  .toast.show { opacity: 1; }
+
+  .footer-note { text-align: center; font-size: 11px; color: #bbb; margin-top: 8px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="page-title">🚗 Find My Car</div>
+  <p class="descriptor">Save your parking location and get walking directions back to your vehicle. Add a quick note if you parked near an elevator, level marker, or row sign.</p>
+
+  <!-- READY VIEW -->
+  <div class="view active" id="viewReady">
+    <div class="card">
+      <div class="map-card">
+        <svg viewBox="0 0 560 210" xmlns="http://www.w3.org/2000/svg">
+          <rect width="560" height="210" fill="#ececec"/>
+          <g fill="#d6d6d6">
+            <rect x="18" y="14" width="58" height="34" rx="6"/>
+            <rect x="92" y="14" width="58" height="34" rx="6"/>
+            <rect x="166" y="14" width="58" height="34" rx="6"/>
+            <rect x="336" y="14" width="58" height="34" rx="6"/>
+            <rect x="410" y="14" width="58" height="34" rx="6"/>
+            <rect x="484" y="14" width="58" height="34" rx="6"/>
+            <rect x="18" y="88" width="58" height="34" rx="6"/>
+            <rect x="92" y="88" width="58" height="34" rx="6"/>
+            <rect x="410" y="88" width="58" height="34" rx="6"/>
+            <rect x="484" y="88" width="58" height="34" rx="6"/>
+            <rect x="18" y="162" width="58" height="34" rx="6"/>
+            <rect x="92" y="162" width="58" height="34" rx="6"/>
+            <rect x="166" y="162" width="58" height="34" rx="6"/>
+            <rect x="336" y="162" width="58" height="34" rx="6"/>
+            <rect x="410" y="162" width="58" height="34" rx="6"/>
+            <rect x="484" y="162" width="58" height="34" rx="6"/>
+          </g>
+        </svg>
+        <div class="pulse-ring"></div>
+        <div class="map-pin-wrap">
+          <div class="pin-head"><div class="pin-dot"></div></div>
+          <div class="pin-shadow"></div>
+        </div>
+      </div>
+
+      <div class="status-row">
+        <span class="status-pill">GPS Location</span>
+        <span class="status-pill">Saved on this device</span>
+      </div>
+
+      <div class="card-title">Parking Notes</div>
+      <p class="card-text">Add a quick reminder to help you find the spot later.</p>
+      <input class="note-input" type="text" id="notesInput" maxlength="100" placeholder="Example: Level P2, near elevator" />
+    </div>
+
+    <button class="primary-btn" onclick="saveSpot()">Save Parking Location</button>
+  </div>
+
+  <!-- SAVED VIEW -->
+  <div class="view" id="viewSaved">
+    <div class="card">
+      <div class="map-card">
+        <svg viewBox="0 0 560 210" xmlns="http://www.w3.org/2000/svg">
+          <rect width="560" height="210" fill="#ececec"/>
+          <g fill="#d6d6d6">
+            <rect x="18" y="14" width="58" height="34" rx="6"/>
+            <rect x="92" y="14" width="58" height="34" rx="6"/>
+            <rect x="166" y="14" width="58" height="34" rx="6"/>
+            <rect x="336" y="14" width="58" height="34" rx="6"/>
+            <rect x="410" y="14" width="58" height="34" rx="6"/>
+            <rect x="484" y="14" width="58" height="34" rx="6"/>
+            <rect x="18" y="88" width="58" height="34" rx="6"/>
+            <rect x="92" y="88" width="58" height="34" rx="6"/>
+            <rect x="410" y="88" width="58" height="34" rx="6"/>
+            <rect x="484" y="88" width="58" height="34" rx="6"/>
+            <rect x="18" y="162" width="58" height="34" rx="6"/>
+            <rect x="92" y="162" width="58" height="34" rx="6"/>
+            <rect x="166" y="162" width="58" height="34" rx="6"/>
+            <rect x="336" y="162" width="58" height="34" rx="6"/>
+            <rect x="410" y="162" width="58" height="34" rx="6"/>
+            <rect x="484" y="162" width="58" height="34" rx="6"/>
+          </g>
+          <circle cx="280" cy="105" r="34" fill="rgba(59,125,15,.12)"/>
+          <circle cx="280" cy="105" r="18" fill="rgba(59,125,15,.2)"/>
+        </svg>
+        <div class="pulse-ring saved"></div>
+        <div class="map-pin-wrap">
+          <div class="pin-head saved"><div class="pin-dot"></div></div>
+          <div class="pin-shadow"></div>
+        </div>
+      </div>
+
+      <div class="card-title">Parking Location Saved</div>
+      <div class="saved-time" id="elapsedTime">Just now</div>
+      <div class="saved-coords" id="savedCoords">—</div>
+      <div class="saved-notes" id="savedNotes"></div>
+    </div>
+
+    <button class="primary-btn success-btn" onclick="findCar()">Get Directions Back</button>
+    <button class="clear-btn" onclick="clearSpot()">Clear Saved Location</button>
+  </div>
+
+  <!-- DENIED VIEW -->
+  <div class="view" id="viewDenied">
+    <div class="card">
+      <div class="map-card" style="display:flex;align-items:center;justify-content:center;color:#999;font-size:14px;text-align:center;padding:0 20px;">
+        Map unavailable until location access is enabled.
+      </div>
+      <div class="card error-card" style="margin-bottom:0;">
+        <div class="card-title">Location Access Needed</div>
+        <p class="card-text">Find My Car uses your location only when you tap Save Parking Location. It does not track your location in the background.</p>
+      </div>
+    </div>
+    <button class="primary-btn" onclick="tryAgain()">Try Again</button>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Private &amp; Local</div>
+    <p class="card-text">Your parking location is saved only on this device. It is not shared with anyone.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Location Accuracy</div>
+    <p class="card-text">GPS accuracy depends on signal strength. Parking garages, covered structures, and large lots may reduce accuracy. For best results, add a note describing your parking area.</p>
+  </div>
+
+  <p class="footer-note">Tip: snap a quick photo of nearby signs or your level marker before you head in — it takes two seconds and can save you a lot of walking later.</p>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  var STORAGE_KEY = "myParkingSpot_v1";
+
+  var viewReady = document.getElementById("viewReady");
+  var viewSaved = document.getElementById("viewSaved");
+  var viewDenied = document.getElementById("viewDenied");
+  var notesInput = document.getElementById("notesInput");
+  var elapsedTime = document.getElementById("elapsedTime");
+  var savedCoords = document.getElementById("savedCoords");
+  var savedNotes = document.getElementById("savedNotes");
+  var toast = document.getElementById("toast");
+
+  function showView(view) {
+    viewReady.classList.remove("active");
+    viewSaved.classList.remove("active");
+    viewDenied.classList.remove("active");
+    view.classList.add("active");
+  }
+
+  function showToast(message) {
+    toast.textContent = message;
+    toast.classList.add("show");
+    setTimeout(function() { toast.classList.remove("show"); }, 2400);
+  }
+
+  function relativeTime(savedAt) {
+    var diff = Math.floor((Date.now() - savedAt) / 1000);
+    if (diff < 60) return "Saved just now";
+    if (diff < 3600) return "Saved " + Math.floor(diff / 60) + " min ago";
+    if (diff < 7200) return "Saved 1 hour ago";
+    if (diff < 86400) return "Saved " + Math.floor(diff / 3600) + " hours ago";
+    if (diff < 172800) return "Saved yesterday";
+    return "Saved " + Math.floor(diff / 86400) + " days ago";
+  }
+
+  function populateSavedView(data) {
+    elapsedTime.textContent = relativeTime(data.savedAt);
+    savedCoords.textContent = data.lat.toFixed(5) + ", " + data.lng.toFixed(5);
+    if (data.notes && data.notes.trim()) {
+      savedNotes.textContent = data.notes;
+      savedNotes.style.display = "block";
+    } else {
+      savedNotes.style.display = "none";
+    }
+  }
+
+  function saveSpot() {
+    if (!navigator.geolocation) {
+      showToast("Location is not supported on this device.");
+      return;
+    }
+    navigator.geolocation.getCurrentPosition(
+      function(position) {
+        var data = {
+          lat: position.coords.latitude,
+          lng: position.coords.longitude,
+          savedAt: Date.now(),
+          notes: notesInput.value.trim()
+        };
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+        populateSavedView(data);
+        showView(viewSaved);
+        showToast("Parking location saved.");
+      },
+      function(error) {
+        if (error.code === error.PERMISSION_DENIED) {
+          showView(viewDenied);
+        } else {
+          showToast("Could not get your location. Try again.");
+        }
+      },
+      { enableHighAccuracy: true, timeout: 8000, maximumAge: 0 }
+    );
+  }
+
+  function findCar() {
+    var raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) { showToast("No saved parking location found."); return; }
+    try {
+      var data = JSON.parse(raw);
+      window.open("https://maps.google.com/?daddr=" + data.lat + "," + data.lng, "_blank");
+      showToast("Opening directions.");
+    } catch (error) {
+      showToast("Could not open directions.");
+    }
+  }
+
+  function clearSpot() {
+    localStorage.removeItem(STORAGE_KEY);
+    notesInput.value = "";
+    showView(viewReady);
+    showToast("Saved location cleared.");
+  }
+
+  function tryAgain() {
+    showView(viewReady);
+    saveSpot();
+  }
+
+  function updateElapsedTime() {
+    var raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return;
+    try {
+      var data = JSON.parse(raw);
+      elapsedTime.textContent = relativeTime(data.savedAt);
+    } catch (error) {
+      localStorage.removeItem(STORAGE_KEY);
+    }
+  }
+
+  function init() {
+    var raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) { showView(viewReady); return; }
+    try {
+      var data = JSON.parse(raw);
+      populateSavedView(data);
+      showView(viewSaved);
+    } catch (error) {
+      localStorage.removeItem(STORAGE_KEY);
+      showView(viewReady);
+    }
+  }
+
+  setInterval(updateElapsedTime, 30000);
+  init();
+</script>
+</body>
+</html>
