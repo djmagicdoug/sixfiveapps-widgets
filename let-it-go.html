@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Let It Go</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #f5f5f5;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    min-height: 100vh;
+    padding: 16px;
+  }
+
+  .wrap { max-width: 480px; margin: 0 auto; }
+
+  /* ── TITLE ── */
+  .page-title {
+    font-size: 22px;
+    font-weight: 700;
+    color: #222;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+  }
+
+  .descriptor {
+    font-size: 13px;
+    color: #888;
+    line-height: 1.5;
+    margin-bottom: 14px;
+  }
+
+  /* ── CARD ── */
+  .card {
+    background: #fff;
+    border-radius: 14px;
+    padding: 28px 20px;
+    box-shadow: 0 1px 4px rgba(0,0,0,.08);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+  }
+
+  /* ── THERMOMETER ── */
+  .thermo-wrap { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+  .thermo-label { font-size: 11px; font-weight: 700; color: #999; letter-spacing: .06em; text-transform: uppercase; }
+  .thermo-outer {
+    width: 36px; height: 160px;
+    background: #f5f5f5;
+    border-radius: 18px;
+    border: 2px solid #e0e0e0;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+  }
+  .thermo-fill {
+    width: 100%; height: 0%;
+    border-radius: 16px;
+    transition: height .4s ease, background-color .4s ease;
+    background: #e05252;
+  }
+  .thermo-bulb {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    border: 2px solid #e0e0e0;
+    background: #e05252;
+    transition: background-color .4s ease;
+    margin-top: 4px;
+  }
+
+  /* ── COUNT ── */
+  .count-display { text-align: center; }
+  .count-number {
+    font-size: 80px;
+    font-weight: 700;
+    color: #222;
+    line-height: 1;
+    transition: transform .1s ease;
+  }
+  .count-number.pulse { transform: scale(1.15); }
+  .count-sub { font-size: 14px; font-weight: 500; color: #888; margin-top: 6px; }
+
+  /* ── TAP BUTTON ── */
+  .tap-btn {
+    width: 120px; height: 120px;
+    border-radius: 50%;
+    border: none;
+    background: #343D46;
+    color: #fff;
+    font-family: inherit;
+    font-size: 18px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform .1s ease, background .3s ease;
+    box-shadow: 0 4px 16px rgba(52,61,70,.25);
+    letter-spacing: .02em;
+  }
+  .tap-btn:active { transform: scale(.93); }
+  .tap-btn.done { background: #3b6d11; box-shadow: 0 4px 16px rgba(59,109,17,.3); }
+
+  /* ── PAYOFF ── */
+  .payoff {
+    display: none;
+    text-align: center;
+    padding: 14px 16px;
+    background: #f0faf4;
+    border-radius: 12px;
+    border: 1px solid #b8e0c8;
+    width: 100%;
+  }
+  .payoff.visible { display: block; }
+  .payoff-text { font-size: 15px; color: #2a6e4a; line-height: 1.5; }
+
+  /* ── RESET ── */
+  .reset-btn {
+    background: none;
+    border: 1.5px solid #343D46;
+    color: #343D46;
+    font-size: 13px;
+    font-weight: 700;
+    font-family: inherit;
+    cursor: pointer;
+    padding: 8px 18px;
+    border-radius: 999px;
+    transition: background .15s;
+  }
+  .reset-btn:hover { background: #f0f0f0; }
+
+  .footer-note {
+    font-size: 12px;
+    color: #bbb;
+    text-align: center;
+    padding-bottom: 4px;
+    margin-top: 4px;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="page-title">🧘 Let It Go</div>
+  <p class="descriptor">Tap ten times. It's not that serious.</p>
+
+  <div class="card">
+    <div style="display:flex;align-items:flex-end;gap:24px;">
+      <div class="thermo-wrap">
+        <div class="thermo-label">Chill</div>
+        <div class="thermo-outer">
+          <div class="thermo-fill" id="thermoFill"></div>
+        </div>
+        <div class="thermo-bulb" id="thermoBulb"></div>
+        <div class="thermo-label">Hot</div>
+      </div>
+      <div class="count-display">
+        <div class="count-number" id="countNum">0</div>
+        <div class="count-sub" id="countSub">of 10 taps</div>
+      </div>
+    </div>
+
+    <button class="tap-btn" id="tapBtn" onclick="handleTap()">TAP</button>
+
+    <div class="payoff" id="payoff">
+      <div class="payoff-text" id="payoffText"></div>
+    </div>
+
+    <button class="reset-btn" id="resetBtn" onclick="resetWidget()" style="display:none;">Start over</button>
+  </div>
+
+  <div class="footer-note" style="margin-top:12px;">Take a breath. You got this.</div>
+
+</div>
+<script>
+  var messages = [
+    "Done. They're not worth it anyway.",
+    "Ten whole seconds of maturity. Proud of you.",
+    "Okay. Now go be the adult in the room.",
+    "You made it. Go drink some water.",
+    "That's ten. Whatever it was, let it go.",
+    "Still annoyed? Probably. But you handled it.",
+    "Deep breaths. You're the one who kept it together.",
+    "It's not that serious. You already knew that.",
+    "Ten taps later and you're still standing. Nice work.",
+    "Okay, okay. You're good. Move on."
+  ];
+
+  var count = 0, done = false, usedMessages = [];
+
+  function getColor(pct) {
+    if (pct < 0.5) {
+      var g = Math.round(82 + (166 * (pct / 0.5)));
+      return 'rgb(224,' + g + ',82)';
+    } else {
+      var r = Math.round(224 - (150 * ((pct - 0.5) / 0.5)));
+      var g2 = Math.round(200 + (58 * ((pct - 0.5) / 0.5)));
+      return 'rgb(' + r + ',' + g2 + ',107)';
+    }
+  }
+
+  function handleTap() {
+    if (done) return;
+    count++;
+    var num = document.getElementById('countNum');
+    num.classList.add('pulse');
+    setTimeout(function() { num.classList.remove('pulse'); }, 120);
+    num.textContent = count;
+    var pct = count / 10;
+    var color = getColor(pct);
+    document.getElementById('thermoFill').style.height = (pct * 100) + '%';
+    document.getElementById('thermoFill').style.backgroundColor = color;
+    document.getElementById('thermoBulb').style.backgroundColor = color;
+    if (count >= 10) {
+      done = true;
+      document.getElementById('tapBtn').classList.add('done');
+      document.getElementById('tapBtn').textContent = '✓';
+      document.getElementById('countSub').textContent = 'You made it.';
+      if (usedMessages.length >= messages.length) usedMessages = [];
+      var idx;
+      do { idx = Math.floor(Math.random() * messages.length); }
+      while (usedMessages.indexOf(idx) !== -1);
+      usedMessages.push(idx);
+      document.getElementById('payoffText').textContent = messages[idx];
+      document.getElementById('payoff').classList.add('visible');
+      document.getElementById('resetBtn').style.display = 'block';
+    }
+  }
+
+  function resetWidget() {
+    count = 0; done = false;
+    document.getElementById('countNum').textContent = '0';
+    document.getElementById('countSub').textContent = 'of 10 taps';
+    document.getElementById('thermoFill').style.height = '0%';
+    document.getElementById('thermoFill').style.backgroundColor = '#e05252';
+    document.getElementById('thermoBulb').style.backgroundColor = '#e05252';
+    document.getElementById('tapBtn').classList.remove('done');
+    document.getElementById('tapBtn').textContent = 'TAP';
+    document.getElementById('payoff').classList.remove('visible');
+    document.getElementById('resetBtn').style.display = 'none';
+  }
+</script>
+</body>
+</html>
