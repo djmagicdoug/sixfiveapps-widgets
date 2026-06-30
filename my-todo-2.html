@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My To-Do</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #f5f5f5;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    min-height: 100vh;
+    padding: 16px;
+  }
+
+  .wrap { max-width: 480px; margin: 0 auto; }
+
+  .page-title {
+    font-size: 22px;
+    font-weight: 700;
+    color: #222;
+    margin-bottom: 6px;
+  }
+
+  .descriptor {
+    font-size: 13px;
+    color: #888;
+    line-height: 1.5;
+    margin-bottom: 14px;
+  }
+
+  .card {
+    background: #fff;
+    border-radius: 14px;
+    padding: 16px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+    margin-bottom: 12px;
+  }
+
+  .input-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+
+  .input-row input[type="text"] {
+    flex: 1;
+    padding: 10px 12px;
+    border: 1.5px solid #ddd;
+    border-radius: 10px;
+    font-size: 15px;
+    outline: none;
+    background: #fafafa;
+    color: #1a1a1a;
+    transition: border-color 0.15s, box-shadow 0.15s;
+    font-family: inherit;
+  }
+
+  .input-row input[type="text"]:focus {
+    border-color: #343D46;
+    box-shadow: 0 0 0 3px rgba(52,61,70,.1);
+  }
+
+  .input-row input::placeholder { color: #bbb; }
+
+  .btn-add {
+    background: #343D46;
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    padding: 10px 16px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    font-family: inherit;
+    transition: opacity 0.15s;
+  }
+
+  .btn-add:active { opacity: .8; }
+
+  .quick-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #999;
+    margin-bottom: 8px;
+  }
+
+  .quick-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+  }
+
+  .pill {
+    background: #f0f0f0;
+    border: none;
+    border-radius: 14px;
+    padding: 6px 13px;
+    font-size: 13px;
+    color: #444;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+    font-family: inherit;
+  }
+
+  .pill:hover { background: #343D46; color: #fff; }
+
+  .progress-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: #888;
+    margin-bottom: 6px;
+  }
+
+  .progress-bar {
+    background: #e8e8e8;
+    border-radius: 99px;
+    height: 6px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: #343D46;
+    border-radius: 99px;
+    transition: width 0.3s ease;
+    width: 0%;
+  }
+
+  .list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-height: 40px;
+  }
+
+  .item {
+    background: #fafafa;
+    border-radius: 10px;
+    padding: 10px 12px;
+  }
+
+  .item-top {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .item input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: #343D46;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+
+  .item-text {
+    flex: 1;
+    font-size: 15px;
+    color: #1a1a1a;
+  }
+
+  .item.checked .item-text {
+    text-decoration: line-through;
+    color: #bbb;
+  }
+
+  .item-delete {
+    background: none;
+    border: none;
+    color: #ccc;
+    font-size: 18px;
+    cursor: pointer;
+    padding: 0 2px;
+    line-height: 1;
+    flex-shrink: 0;
+  }
+
+  .item-delete:hover { color: #c0392b; }
+
+  .empty-state {
+    text-align: center;
+    color: #bbb;
+    font-size: 14px;
+    padding: 20px 0;
+    line-height: 1.6;
+  }
+
+  .actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+  }
+
+  .btn-secondary {
+    flex: 1;
+    background: #f0f0f0;
+    border: none;
+    border-radius: 10px;
+    padding: 9px;
+    font-size: 13px;
+    color: #444;
+    cursor: pointer;
+    font-family: inherit;
+    font-weight: 500;
+    transition: background 0.15s;
+  }
+
+  .btn-secondary:hover { background: #343D46; color: #fff; }
+
+  .footer-note {
+    text-align: center;
+    font-size: 11px;
+    color: #bbb;
+    margin-top: 8px;
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <div class="page-title">✅ My To-Do</div>
+  <p class="descriptor">Errands, appointments, reminders, and fast tasks. Add items throughout the day and check them off as you go.</p>
+
+  <div class="card">
+    <div class="input-row">
+      <input type="text" id="todoInput" placeholder="Add a task..." autocomplete="off" />
+      <button class="btn-add" onclick="addFromInput()">+ Add</button>
+    </div>
+
+    <div class="quick-label">Quick Add</div>
+    <div class="quick-pills">
+      <button class="pill" onclick="quickAdd('Gas')">⛽ Gas</button>
+      <button class="pill" onclick="quickAdd('Groceries')">🛒 Groceries</button>
+      <button class="pill" onclick="quickAdd('Laundry')">🧺 Laundry</button>
+      <button class="pill" onclick="quickAdd('Pharmacy')">💊 Pharmacy</button>
+      <button class="pill" onclick="quickAdd('Bank')">🏦 Bank</button>
+      <button class="pill" onclick="quickAdd('Post Office')">📦 Post Office</button>
+      <button class="pill" onclick="quickAdd('Clean House')">🧹 Clean House</button>
+      <button class="pill" onclick="quickAdd('Car Wash')">🚗 Car Wash</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="progress-row">
+      <span id="progressText">0 of 0 complete</span>
+      <span id="progressPercent">0%</span>
+    </div>
+    <div class="progress-bar">
+      <div class="progress-fill" id="progressFill"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="list" id="todoList"></div>
+    <div class="actions" id="actions" style="display:none;">
+      <button class="btn-secondary" onclick="clearChecked()">Clear Checked</button>
+      <button class="btn-secondary" onclick="clearAll()">Clear All</button>
+    </div>
+  </div>
+
+  <div class="footer-note">Saved on this device only.</div>
+
+</div>
+
+<script>
+  var items = JSON.parse(localStorage.getItem('mytodo-items') || '[]');
+
+  function save() {
+    localStorage.setItem('mytodo-items', JSON.stringify(items));
+  }
+
+  function makeId() {
+    return Date.now() + '_' + Math.floor(Math.random() * 100000);
+  }
+
+  function quickAdd(name) {
+    items.push({ text: name, checked: false, id: makeId() });
+    save(); render();
+  }
+
+  function addFromInput() {
+    var input = document.getElementById('todoInput');
+    var val = input.value.trim();
+    if (!val) return;
+    items.push({ text: val, checked: false, id: makeId() });
+    input.value = '';
+    input.focus();
+    save(); render();
+  }
+
+  function toggleItem(id) {
+    for (var i = 0; i < items.length; i++) {
+      if (items[i].id === id) { items[i].checked = !items[i].checked; break; }
+    }
+    save(); render();
+  }
+
+  function deleteItem(id) {
+    items = items.filter(function(item) { return item.id !== id; });
+    save(); render();
+  }
+
+  function clearChecked() {
+    items = items.filter(function(item) { return !item.checked; });
+    save(); render();
+  }
+
+  function clearAll() {
+    items = [];
+    save(); render();
+  }
+
+  function render() {
+    var listEl = document.getElementById('todoList');
+    var total = items.length;
+    var done = items.filter(function(i) { return i.checked; }).length;
+    var pct = total === 0 ? 0 : Math.round((done / total) * 100);
+
+    document.getElementById('progressText').textContent = done + ' of ' + total + ' complete';
+    document.getElementById('progressPercent').textContent = pct + '%';
+    document.getElementById('progressFill').style.width = pct + '%';
+    document.getElementById('actions').style.display = total > 0 ? 'flex' : 'none';
+
+    if (total === 0) {
+      listEl.innerHTML = '<div class="empty-state">No tasks yet.<br>Add one above or tap Quick Add.</div>';
+      return;
+    }
+
+    listEl.innerHTML = '';
+    items.forEach(function(item) {
+      var div = document.createElement('div');
+      div.className = 'item' + (item.checked ? ' checked' : '');
+
+      var topRow = document.createElement('div');
+      topRow.className = 'item-top';
+
+      var cb = document.createElement('input');
+      cb.type = 'checkbox';
+      cb.checked = item.checked;
+      cb.onclick = function() { toggleItem(item.id); };
+
+      var span = document.createElement('span');
+      span.className = 'item-text';
+      span.textContent = item.text;
+
+      var del = document.createElement('button');
+      del.className = 'item-delete';
+      del.textContent = '×';
+      del.onclick = function() { deleteItem(item.id); };
+
+      topRow.appendChild(cb);
+      topRow.appendChild(span);
+      topRow.appendChild(del);
+      div.appendChild(topRow);
+      listEl.appendChild(div);
+    });
+  }
+
+  document.getElementById('todoInput').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') addFromInput();
+  });
+
+  render();
+</script>
+
+</body>
+</html>
