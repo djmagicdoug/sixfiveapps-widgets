@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Workout — Six Five Apps</title>
+<style>
+  /* Scoped under .sfa-workout to survive GoodBarber global overrides */
+  .sfa-workout, .sfa-workout * { box-sizing: border-box; margin: 0; padding: 0; }
+  .sfa-workout {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: #F8F6F3;
+    color: #343D46;
+    max-width: 520px;
+    margin: 0 auto;
+    padding: 16px 16px 40px;
+    min-height: 100vh;
+  }
+
+  /* Hero card */
+  .sfa-workout .sfa-hero {
+    background: #343D46;
+    border-radius: 14px;
+    padding: 24px 20px 20px;
+    margin-bottom: 18px;
+  }
+  .sfa-workout .sfa-kicker {
+    color: #B3995B;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .sfa-workout .sfa-title {
+    font-family: Georgia, "Times New Roman", serif;
+    color: #F8F6F3;
+    font-size: 28px;
+    font-weight: 400;
+    line-height: 1.15;
+  }
+  .sfa-workout .sfa-sub {
+    color: rgba(248, 246, 243, 0.7);
+    font-size: 13px;
+    margin-top: 8px;
+    line-height: 1.4;
+  }
+
+  /* Today's date line */
+  .sfa-workout .sfa-today {
+    font-size: 13px;
+    color: #6b7280;
+    margin: 0 4px 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+  }
+  .sfa-workout .sfa-count {
+    color: #C65E2D;
+    font-weight: 700;
+  }
+
+  /* Exercise rows */
+  .sfa-workout .sfa-list { list-style: none; }
+  .sfa-workout .sfa-row {
+    background: #ffffff;
+    border: 1px solid #e6e2db;
+    border-radius: 12px;
+    padding: 13px 14px;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    transition: border-color 0.15s ease, background 0.15s ease;
+    user-select: none;
+  }
+  .sfa-workout .sfa-row:active { background: #faf8f4; }
+  .sfa-workout .sfa-check {
+    width: 26px; height: 26px;
+    min-width: 26px;
+    border: 2px solid #c9c3b8;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    color: transparent;
+    transition: all 0.15s ease;
+  }
+  .sfa-workout .sfa-row.done { border-color: #C65E2D; }
+  .sfa-workout .sfa-row.done .sfa-check {
+    background: #C65E2D;
+    border-color: #C65E2D;
+    color: #fff;
+  }
+  .sfa-workout .sfa-row.done .sfa-ex-name { color: #9a9488; text-decoration: line-through; text-decoration-color: rgba(198,94,45,0.5); }
+  .sfa-workout .sfa-ex-name {
+    font-size: 15px;
+    font-weight: 600;
+    line-height: 1.3;
+  }
+  .sfa-workout .sfa-ex-detail {
+    font-size: 12px;
+    color: #8a8579;
+    margin-top: 2px;
+    line-height: 1.3;
+  }
+
+  /* Note field */
+  .sfa-workout .sfa-note {
+    width: 100%;
+    border: 1px solid #e6e2db;
+    border-radius: 12px;
+    background: #ffffff;
+    padding: 12px 14px;
+    font-size: 14px;
+    font-family: inherit;
+    color: #343D46;
+    margin: 6px 0 12px;
+    resize: none;
+    min-height: 44px;
+  }
+  .sfa-workout .sfa-note::placeholder { color: #b3ad9f; }
+  .sfa-workout .sfa-note:focus { outline: none; border-color: #B3995B; }
+
+  /* Save button */
+  .sfa-workout .sfa-save {
+    width: 100%;
+    background: #C65E2D;
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    padding: 15px;
+    font-size: 16px;
+    font-weight: 700;
+    font-family: inherit;
+    cursor: pointer;
+    transition: opacity 0.15s ease;
+  }
+  .sfa-workout .sfa-save:disabled { opacity: 0.4; cursor: default; }
+  .sfa-workout .sfa-save:active:not(:disabled) { opacity: 0.85; }
+  .sfa-workout .sfa-saved-msg {
+    text-align: center;
+    color: #B3995B;
+    font-size: 13px;
+    font-weight: 600;
+    margin-top: 10px;
+    min-height: 18px;
+  }
+
+  /* History */
+  .sfa-workout .sfa-hist-head {
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 19px;
+    margin: 28px 4px 12px;
+    color: #343D46;
+  }
+  .sfa-workout .sfa-hist-item {
+    background: #ffffff;
+    border: 1px solid #e6e2db;
+    border-left: 4px solid #B3995B;
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin-bottom: 8px;
+  }
+  .sfa-workout .sfa-hist-date {
+    font-size: 13px;
+    font-weight: 700;
+    color: #343D46;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+  }
+  .sfa-workout .sfa-hist-tally {
+    font-size: 12px;
+    color: #C65E2D;
+    font-weight: 700;
+  }
+  .sfa-workout .sfa-hist-exs {
+    font-size: 12.5px;
+    color: #8a8579;
+    margin-top: 4px;
+    line-height: 1.45;
+  }
+  .sfa-workout .sfa-hist-note {
+    font-size: 12.5px;
+    color: #343D46;
+    margin-top: 6px;
+    font-style: italic;
+    line-height: 1.4;
+  }
+  .sfa-workout .sfa-empty {
+    text-align: center;
+    color: #b3ad9f;
+    font-size: 13.5px;
+    padding: 18px 10px;
+    line-height: 1.5;
+  }
+  .sfa-workout .sfa-hist-del {
+    background: none;
+    border: none;
+    color: #c9c3b8;
+    font-size: 12px;
+    cursor: pointer;
+    padding: 2px 4px;
+    font-family: inherit;
+  }
+  .sfa-workout .sfa-hist-del:active { color: #C65E2D; }
+</style>
+</head>
+<body>
+<div class="sfa-workout">
+
+  <div class="sfa-hero">
+    <div class="sfa-kicker">Six Five Apps</div>
+    <div class="sfa-title">My Workout</div>
+    <div class="sfa-sub">Lower body strength &middot; Tap each exercise as you finish it, then save your session.</div>
+  </div>
+
+  <div class="sfa-today">
+    <span id="sfaTodayDate"></span>
+    <span class="sfa-count"><span id="sfaDoneCount">0</span> of 9 done</span>
+  </div>
+
+  <ul class="sfa-list" id="sfaList"></ul>
+
+  <textarea class="sfa-note" id="sfaNote" rows="2" placeholder="Optional note &mdash; e.g. chair stand test: 14 reps, or how you felt"></textarea>
+
+  <button class="sfa-save" id="sfaSaveBtn" disabled>Save today's session</button>
+  <div class="sfa-saved-msg" id="sfaSavedMsg"></div>
+
+  <div class="sfa-hist-head">Previous sessions</div>
+  <div id="sfaHistory"></div>
+
+</div>
+
+<script>
+(function() {
+  var STORAGE_KEY = 'sfa_my_workout_sessions';
+
+  var EXERCISES = [
+    { name: 'Chair Sit-to-Stands', detail: '2\u20133 sets of 8\u201312 reps' },
+    { name: 'Wall Squats', detail: '3 holds of 15\u201330 sec' },
+    { name: 'Step-Ups', detail: '2 sets of 10 each leg' },
+    { name: 'Glute Bridges', detail: '2\u20133 sets of 12\u201315 reps' },
+    { name: 'Standing Calf Raises', detail: '2\u20133 sets of 15 reps' },
+    { name: 'Single-Leg Balance', detail: '3 holds of 20\u201330 sec each leg' },
+    { name: 'Heel-to-Toe Walk', detail: '3 passes of 10\u201320 steps' },
+    { name: 'Standing Hamstring Curls', detail: '2 sets of 12 each leg' },
+    { name: 'Floor Get-Ups (optional)', detail: '3\u20135 repetitions' }
+  ];
+
+  var checked = {};
+
+  var listEl = document.getElementById('sfaList');
+  var countEl = document.getElementById('sfaDoneCount');
+  var saveBtn = document.getElementById('sfaSaveBtn');
+  var savedMsg = document.getElementById('sfaSavedMsg');
+  var noteEl = document.getElementById('sfaNote');
+  var histEl = document.getElementById('sfaHistory');
+  var todayEl = document.getElementById('sfaTodayDate');
+
+  todayEl.textContent = new Date().toLocaleDateString(undefined, {
+    weekday: 'long', month: 'long', day: 'numeric'
+  });
+
+  function loadSessions() {
+    try {
+      return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+    } catch (e) { return []; }
+  }
+
+  function saveSessions(sessions) {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(sessions));
+    } catch (e) {}
+  }
+
+  function renderList() {
+    listEl.innerHTML = '';
+    EXERCISES.forEach(function(ex, i) {
+      var li = document.createElement('li');
+      li.className = 'sfa-row' + (checked[i] ? ' done' : '');
+      li.setAttribute('role', 'checkbox');
+      li.setAttribute('aria-checked', checked[i] ? 'true' : 'false');
+      li.setAttribute('tabindex', '0');
+
+      var box = document.createElement('div');
+      box.className = 'sfa-check';
+      box.textContent = '\u2713';
+
+      var txt = document.createElement('div');
+      var nm = document.createElement('div');
+      nm.className = 'sfa-ex-name';
+      nm.textContent = ex.name;
+      var dt = document.createElement('div');
+      dt.className = 'sfa-ex-detail';
+      dt.textContent = ex.detail;
+      txt.appendChild(nm);
+      txt.appendChild(dt);
+
+      li.appendChild(box);
+      li.appendChild(txt);
+
+      function toggle() {
+        checked[i] = !checked[i];
+        renderList();
+        updateCount();
+      }
+      li.addEventListener('click', toggle);
+      li.addEventListener('keydown', function(e) {
+        if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); toggle(); }
+      });
+
+      listEl.appendChild(li);
+    });
+  }
+
+  function updateCount() {
+    var n = Object.keys(checked).filter(function(k) { return checked[k]; }).length;
+    countEl.textContent = n;
+    saveBtn.disabled = n === 0;
+  }
+
+  function renderHistory() {
+    var sessions = loadSessions();
+    histEl.innerHTML = '';
+
+    if (sessions.length === 0) {
+      var empty = document.createElement('div');
+      empty.className = 'sfa-empty';
+      empty.textContent = 'No sessions yet. Your first one will show up here.';
+      histEl.appendChild(empty);
+      return;
+    }
+
+    sessions.slice().reverse().forEach(function(s, revIdx) {
+      var realIdx = sessions.length - 1 - revIdx;
+      var item = document.createElement('div');
+      item.className = 'sfa-hist-item';
+
+      var dateRow = document.createElement('div');
+      dateRow.className = 'sfa-hist-date';
+      var dateSpan = document.createElement('span');
+      dateSpan.textContent = s.date;
+      var right = document.createElement('span');
+      var tally = document.createElement('span');
+      tally.className = 'sfa-hist-tally';
+      tally.textContent = s.exercises.length + ' of 9';
+      var del = document.createElement('button');
+      del.className = 'sfa-hist-del';
+      del.textContent = '\u2715';
+      del.setAttribute('aria-label', 'Delete this session');
+      del.addEventListener('click', function() {
+        if (confirm('Delete this session?')) {
+          var all = loadSessions();
+          all.splice(realIdx, 1);
+          saveSessions(all);
+          renderHistory();
+        }
+      });
+      right.appendChild(tally);
+      right.appendChild(document.createTextNode('\u00a0\u00a0'));
+      right.appendChild(del);
+      dateRow.appendChild(dateSpan);
+      dateRow.appendChild(right);
+
+      var exs = document.createElement('div');
+      exs.className = 'sfa-hist-exs';
+      exs.textContent = s.exercises.join(' \u00b7 ');
+
+      item.appendChild(dateRow);
+      item.appendChild(exs);
+
+      if (s.note) {
+        var note = document.createElement('div');
+        note.className = 'sfa-hist-note';
+        note.textContent = '\u201c' + s.note + '\u201d';
+        item.appendChild(note);
+      }
+
+      histEl.appendChild(item);
+    });
+  }
+
+  saveBtn.addEventListener('click', function() {
+    var doneNames = EXERCISES
+      .filter(function(_, i) { return checked[i]; })
+      .map(function(ex) { return ex.name; });
+    if (doneNames.length === 0) return;
+
+    var sessions = loadSessions();
+    sessions.push({
+      date: new Date().toLocaleDateString(undefined, {
+        weekday: 'short', month: 'short', day: 'numeric', year: 'numeric'
+      }),
+      exercises: doneNames,
+      note: noteEl.value.trim()
+    });
+    saveSessions(sessions);
+
+    checked = {};
+    noteEl.value = '';
+    renderList();
+    updateCount();
+    renderHistory();
+
+    savedMsg.textContent = 'Session saved. Nice work.';
+    setTimeout(function() { savedMsg.textContent = ''; }, 3000);
+  });
+
+  renderList();
+  updateCount();
+  renderHistory();
+})();
+</script>
+</body>
+</html>
