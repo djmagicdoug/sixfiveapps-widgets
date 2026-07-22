@@ -1,0 +1,244 @@
+<!-- ============================================================
+     HOURS STATUS WIDGET — Six Five Apps
+     Single-file. Paste this whole block into the GoodBarber
+     HTML/source box. No external files, no Fouita.
+
+     EDIT ONLY THE "SETTINGS" OBJECT BELOW.
+     ============================================================ -->
+
+<div class="sfa-hours" data-sfa-hours role="status"></div>
+
+<style>
+.sfa-hours,
+.sfa-hours * {
+  box-sizing: border-box !important;
+}
+.sfa-hours {
+  display: inline-block !important;
+  font-family: Arial, Helvetica, sans-serif !important;
+  background: transparent !important;
+  color: #222 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  text-align: left !important;
+}
+.sfa-hours .sfa-hours-top {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  margin: 0 0 3px 0 !important;
+  line-height: 1.1 !important;
+}
+.sfa-hours .sfa-hours-dot {
+  width: 9px !important;
+  height: 9px !important;
+  min-width: 9px !important;
+  border-radius: 50% !important;
+  display: inline-block !important;
+  flex: 0 0 9px !important;
+}
+.sfa-hours .sfa-hours-label {
+  font-size: 1rem !important;
+  font-weight: 700 !important;
+  margin: 0 !important;
+}
+.sfa-hours .sfa-hours-detail {
+  font-size: 0.84rem !important;
+  line-height: 1.25 !important;
+  padding-left: 17px !important;
+  margin: 0 !important;
+}
+</style>
+
+<script>
+(function () {
+  "use strict";
+
+  /* =========================================================
+     SETTINGS — edit this block only
+     ---------------------------------------------------------
+     hours format:
+       "closed"              -> closed all day
+       "9:00-18:00"          -> one shift
+       "9:00-14:00,17:00-22:00"  -> split shift (comma separated)
+       "18:00-2:00"          -> overnight (close earlier than open)
+     Use 24-hour time. Display is auto-converted to AM/PM.
+     ========================================================= */
+
+  var SETTINGS = {
+    timezone: "America/Los_Angeles",
+    closesSoonMinutes: 90,
+
+    labels: {
+      open: "Open now",
+      soon: "Closes soon",
+      closed: "Closed"
+    },
+
+    colors: {
+      open: "#8a8355",
+      soon: "#b26a00",
+      closed: "#9b1c1c",
+      detail: "#666666"
+    },
+
+    hours: {
+      sun: "closed",
+      mon: "9:00-18:00",
+      tue: "9:00-18:00",
+      wed: "9:00-18:00",
+      thu: "9:00-18:00",
+      fri: "9:00-18:00",
+      sat: "9:00-16:00"
+    }
+  };
+
+  /* =========================================================
+     LOGIC — leave unchanged
+     ========================================================= */
+
+  var DAY_KEYS = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"];
+  var DAY_NAMES = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+
+  function zonedNow() {
+    try {
+      var parts = new Intl.DateTimeFormat("en-US", {
+        timeZone: SETTINGS.timezone,
+        weekday: "short",
+        hour: "numeric",
+        minute: "numeric",
+        hour12: false
+      }).formatToParts(new Date());
+
+      var map = {};
+      for (var i = 0; i < parts.length; i++) {
+        if (parts[i].type !== "literal") map[parts[i].type] = parts[i].value;
+      }
+      var idx = { Sun: 0, Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fri: 5, Sat: 6 };
+      var hour = parseInt(map.hour, 10) % 24; // some engines report 24 at midnight
+      return { day: idx[map.weekday], minutes: (hour * 60) + parseInt(map.minute, 10) };
+    } catch (e) {
+      var d = new Date();
+      return { day: d.getDay(), minutes: d.getHours() * 60 + d.getMinutes() };
+    }
+  }
+
+  function toMinutes(t) {
+    var p = t.split(":");
+    return (parseInt(p[0], 10) * 60) + parseInt(p[1] || "0", 10);
+  }
+
+  function formatTime(t) {
+    var p = t.split(":");
+    var h = parseInt(p[0], 10);
+    var m = parseInt(p[1] || "0", 10);
+    var suffix = (h % 24) >= 12 ? "PM" : "AM";
+    h = (h % 12) || 12;
+    return h + ":" + (m < 10 ? "0" + m : m) + " " + suffix;
+  }
+
+  function parseDay(str) {
+    if (!str || String(str).toLowerCase() === "closed") return [];
+    return String(str).split(",").map(function (range) {
+      var pair = range.split("-");
+      var openStr = (pair[0] || "").trim();
+      var closeStr = (pair[1] || "").trim();
+      return {
+        open: toMinutes(openStr),
+        close: toMinutes(closeStr),
+        openStr: openStr,
+        closeStr: closeStr
+      };
+    }).filter(function (s) {
+      return !isNaN(s.open) && !isNaN(s.close);
+    });
+  }
+
+  function nextOpening(now) {
+    var today = parseDay(SETTINGS.hours[DAY_KEYS[now.day]]);
+    for (var i = 0; i < today.length; i++) {
+      if (now.minutes < today[i].open) {
+        return "Opens today at " + formatTime(today[i].openStr);
+      }
+    }
+    for (var d = 1; d <= 7; d++) {
+      var idx = (now.day + d) % 7;
+      var slots = parseDay(SETTINGS.hours[DAY_KEYS[idx]]);
+      if (!slots.length) continue;
+      if (d === 1) return "Opens tomorrow at " + formatTime(slots[0].openStr);
+      return "Opens " + DAY_NAMES[idx] + " at " + formatTime(slots[0].openStr);
+    }
+    return "Hours unavailable";
+  }
+
+  function state(minsLeft, closeStr) {
+    var soon = minsLeft <= SETTINGS.closesSoonMinutes;
+    return {
+      state: soon ? "soon" : "open",
+      text: soon ? SETTINGS.labels.soon : SETTINGS.labels.open,
+      detail: "Closes at " + formatTime(closeStr)
+    };
+  }
+
+  function getStatus() {
+    var now = zonedNow();
+
+    // Overnight shift that started yesterday and is still running
+    var yesterday = parseDay(SETTINGS.hours[DAY_KEYS[(now.day + 6) % 7]]);
+    for (var i = 0; i < yesterday.length; i++) {
+      var y = yesterday[i];
+      if (y.close <= y.open && now.minutes < y.close) {
+        return state(y.close - now.minutes, y.closeStr);
+      }
+    }
+
+    var today = parseDay(SETTINGS.hours[DAY_KEYS[now.day]]);
+    for (var j = 0; j < today.length; j++) {
+      var s = today[j];
+      if (s.close <= s.open) {
+        if (now.minutes >= s.open) {
+          return state((1440 - now.minutes) + s.close, s.closeStr);
+        }
+      } else if (now.minutes >= s.open && now.minutes < s.close) {
+        return state(s.close - now.minutes, s.closeStr);
+      }
+    }
+
+    return {
+      state: "closed",
+      text: SETTINGS.labels.closed,
+      detail: nextOpening(now)
+    };
+  }
+
+  function paint(el) {
+    var s = getStatus();
+    var color = s.state === "open" ? SETTINGS.colors.open
+              : s.state === "soon" ? SETTINGS.colors.soon
+              : SETTINGS.colors.closed;
+
+    el.innerHTML =
+      '<div class="sfa-hours-top">' +
+        '<span class="sfa-hours-dot" style="background:' + color + ' !important;"></span>' +
+        '<span class="sfa-hours-label" style="color:' + color + ' !important;">' + s.text + '</span>' +
+      '</div>' +
+      '<div class="sfa-hours-detail" style="color:' + SETTINGS.colors.detail + ' !important;">' + s.detail + '</div>';
+  }
+
+  function boot() {
+    var nodes = document.querySelectorAll("[data-sfa-hours]");
+    if (!nodes.length) return;
+    for (var i = 0; i < nodes.length; i++) paint(nodes[i]);
+    if (!window.__sfaHoursTimer) {
+      window.__sfaHoursTimer = setInterval(boot, 60000);
+    }
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", boot);
+  } else {
+    boot();
+  }
+  setTimeout(boot, 400); // safety pass for delayed WebView injection
+})();
+</script>
