@@ -82,7 +82,7 @@
     '<div class="sfa-field"><label>where</label><input type="text" id="sfa-venue" placeholder="the copper fork"></div>' +
     '<div class="sfa-row"><div class="sfa-field"><label>date</label><input type="text" id="sfa-date" placeholder="fri, aug 8"></div>' +
     '<div class="sfa-field"><label>meet time</label><input type="text" id="sfa-time" placeholder="7:45 pm"></div></div>' +
-    '<div class="sfa-field"><label>address</label><input type="text" id="sfa-address" placeholder="525 fremont st"></div>' +
+    '<div class="sfa-field"><label>address</label><input type="text" id="sfa-address" placeholder="250 e.superior lane"></div>' +
   '</div>' +
 
   '<div class="sfa-sec"><h2><span class="sfa-em">🍽️</span> reservation</h2>' +
