@@ -135,7 +135,7 @@
         timeStr = wins.map(function (w) { return fmt(w[0]) + " \u2013 " + fmt(w[1]); }).join(", ");
       } else {
         closed = " is-closed";
-        timeStr = "Not Available Closed";
+        timeStr = "Not Available";
       }
       rows += '<div class="sfa-hhs-day' + closed + '" data-dow="' + d + '">' +
                 '<span class="d-name">' + DAYNAMES[d] + '</span>' +
